@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<h:head>
+	<link rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+	<title><ui:insert name="title">Spotter Page</ui:insert></title>
+</h:head>
+<h:body>
+
+	<div class="jumbotron jumbotron-sm">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12 col-lg-12">
+					<h1 class="h1">
+						welcome Spotter <h:outputLabel value="#{userController.userName()}" /><small></small>
+					</h1>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<h:form>
+		<h:commandButton
+			style="margin-right:350px;float:right;hight:100px;width:200px"
+			value="Login" action="#{userController.login()}"
+			class="btn btn-primary pull-right" />
+		<h:commandButton
+			style="margin-left:350px;float:left;hight:100px;width:200px"
+			value="Register" action="#{userController.register()}"
+			class="btn btn-primary pull-left" />
+	</h:form>
+
+</h:body>
+</html>

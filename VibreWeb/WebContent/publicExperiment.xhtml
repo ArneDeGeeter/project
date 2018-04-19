@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<link rel="stylesheet"
+		href="/VibreWeb/resources/css/vibrationStyle.css" />
+	<title><ui:insert name="title">Experiment page</ui:insert></title>
+
+	<f:metadata>
+		<f:viewParam name="experiment"
+			value="#{metingController.experiment.id}" required="true" />
+		<f:viewParam name="experiment"
+			value="#{imageController.experiment.id}" required="true" />
+		<f:viewParam name="experiment" value="#{accesController.experimentId}"
+			required="true" />
+		<f:viewAction action="#{accesController.publicAccesCheck()}" />
+	</f:metadata>
+
+</h:head>
+
+<h:body>
+	<div id="loginBar"></div>
+	<div id="transition" />
+	<div id="wrapperHeader">
+		<p:commandLink action="#{navigationController.homedirect()}">
+			<h:graphicImage id="logo" value="/resources/images/vibrationLogo.png" />
+		</p:commandLink>
+		<h:inputHidden value="#{accesController.publicAccesCheck()}" />
+		<h:inputHidden value="#{imageController.getExpData()}" />
+		<h:inputHidden value="#{metingController.createLineModel()}" />
+
+		<div id="userLog">
+			<h:form id="profileForm">
+				<h:commandButton id="profileButton"
+					value="#{userController.currentUser()}"
+					action="#{userController.userPage()}" />
+
+			</h:form>
+			<h:graphicImage id="icon" value="/resources/images/loginIcon.png" />
+		</div>
+
+	</div>
+	<div id="keuzeTabs">
+		<h:form>
+			<h:commandButton class="tab" value="home"
+				action="#{navigationController.home()}" />
+			<h:commandButton class="tab" value="Doorzoek projecten"
+				action="#{navigationController.doorzoekProjecten()}" />
+			<h:commandButton class="tab" value="Doorzoek gebruikers"
+				action="#{navigationController.doorzoekUsers()}" />
+			<h:commandButton class="tab" value="login"
+				action="#{navigationController.loginPage()}" />
+			<h:commandButton class="tab" value="Register"
+				action="#{navigationController.register()}" />
+		</h:form>
+	</div>
+	<div id="mainBody">
+		<h:form>
+			<h:commandButton value="Terug naar project"
+				action="#{imageController.naarProjectPagina()}" />
+		</h:form>
+		<p>Opmerking:</p>
+
+		<h:outputText value="#{metingController.toonOpmerking()}"
+			styleClass="preformatted" />
+		<p:chart type="line" model="#{metingController.metingChart2}"
+			style="height:300px;" />
+		<p:chart type="line" model="#{metingController.metingChart3}"
+			style="height:300px;" />
+
+		<h:panelGroup rendered="#{metingController.geefMetingchart1()}">
+			<p:chart type="line" model="#{metingController.metingChart1}"
+				style="height:300px;" />
+		</h:panelGroup>
+		<p:dataTable id="docId" var="row" value="#{imageController.fotoData}"
+			editable="false" widgetVar="documentTable">
+			<p:column headerText="Image">
+				<p:graphicImage value="#{userController.foto}">
+					<f:param name="id" value="#{row.id}" />
+				</p:graphicImage>
+				<h:outputLabel value="#{row.foto_naam}" />
+			</p:column>
+		</p:dataTable>
+	</div>
+</h:body>
+</html>

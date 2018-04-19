@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><ui:insert name="title">Profile Page</ui:insert></title>
+	<link rel="stylesheet"
+		href="/VibreWeb/resources/css/vibrationStyle.css" />
+</h:head>
+<h:body>
+
+
+	<div id="wrapperHeader">Trilled</div>
+
+	<div id="keuzeTabs">
+		<h:form>
+			<h:commandButton class="tab" value="Verander profiel"
+				action="#{userController.veranderProfiel()}">
+				<f:actionListener binding="#{userController.geefPersoon()}" />
+			</h:commandButton>
+			<h:commandButton class="tab" value="create project"
+				action="#{projectController.createProjectPage()}" />
+		</h:form>
+	</div>
+	<div id="welcome">
+		Welkom
+		<h:outputLabel value="#{userController.currentUser()}" />
+	</div>
+	<div id="mainBody">
+		<p>Mijn projecten:</p>
+		<div id="table">
+			<h:form>
+				<h:dataTable
+					value="#{userController.findUserProjects()}" var="project">
+
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="ID" />
+						</f:facet>
+						<h:outputText value="#{project.id}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Titel" />
+						</f:facet>
+						<h:outputText value="#{project.titel}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Action" />
+						</f:facet>
+						<a href="/users/project.xhtml?project=#{project.id}">Experiment</a>
+					</h:column>
+				</h:dataTable>
+			</h:form>
+		</div>
+
+		<h:form>
+			<h:commandButton value="Voeg foto toe"
+				action="#{userController.uploadPagina()}" />
+
+			<h:commandButton value="logout" action="#{userController.logout()}" />
+		</h:form>
+	</div>
+</h:body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><ui:insert name="title">User Search Page</ui:insert></title>
+	<link rel="stylesheet"
+		href="/VibreWeb/resources/css/vibrationStyle.css" />
+</h:head>
+<h:body>
+	<div id="loginBar"></div>
+	<div id="transition" />
+	<div id="wrapperHeader">
+		<p:commandLink action="#{navigationController.homedirect()}">
+			<h:graphicImage id="logo" value="/resources/images/vibrationLogo.png" />
+		</p:commandLink>
+		<div id="userLog">
+			<h:form id="profileForm">
+				<h:commandButton id="profileButton"
+					value="#{userController.currentUser()}"
+					action="#{userController.userPage()}" />
+			</h:form>
+			<h:graphicImage id="icon" value="/resources/images/loginIcon.png" />
+		</div>
+	</div>
+	<div id="keuzeTabs">
+		<h:form>
+			<h:commandButton class="tab" value="home"
+				action="#{navigationController.home()}" />
+			<h:commandButton class="tab" value="Doorzoek projecten"
+				action="#{navigationController.doorzoekProjecten()}" />
+			<h:commandButton class="active-tab" value="Doorzoek gebruikers"
+				action="#{navigationController.doorzoekUsers()}" />
+			<h:commandButton class="tab" value="login"
+				action="#{navigationController.loginPage()}" />
+			<h:commandButton class="tab" value="Register"
+				action="#{navigationController.register()}" />
+		</h:form>
+	</div>
+	<div id="mainBody">
+
+		<div id="table">
+			<h:form>
+				<h:inputText id="userName" value="#{searchController.userZoekNaam}">
+					<f:ajax event="change" render="userTable" />
+				</h:inputText>
+				<p:watermark for="userName" value="Naam gebruiker" />
+				<p:tooltip id="toolTipGrow" for="userName"
+					value="Druk op enter om de zoekopdracht in te voeren"
+					showEffect="clip" hideEffect="clip" position="left" />
+				<h:dataTable id="userTable" value="#{searchController.zoekUsers()}"
+					var="gebruiker">
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Titel" />
+						</f:facet>
+						<h:outputText value="#{gebruiker.naam}" />
+					</h:column>
+					<h:column>
+						<a
+							href="profielpaginaBezoekers.xhtml?gebruiker=#{gebruiker.idpersonen}"><span></span>Naar
+							profiel</a>
+					</h:column>
+				</h:dataTable>
+			</h:form>
+		</div>
+	</div>
+</h:body>
+</html>

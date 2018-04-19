@@ -1,0 +1,261 @@
+package vibration.EJB;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.EJBContext;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.SecurityContext;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.IncorrectClaimException;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MissingClaimException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import vibration.JPA.Personen;
+
+@Stateless
+public class Logincase implements LogincaseLocal {
+
+	@PersistenceContext(unitName = "VibreJPA")
+	private EntityManager em;
+
+	@Resource
+	private SessionContext ctx;
+
+	@EJB
+	private UserManagementEJBLocal userEJB;
+
+	public Logincase() {
+		throw new UnsupportedOperationException();
+	}
+
+	final String SECRET = Base64.getEncoder().encodeToString("SecretKeyForProjectVerySecure".getBytes());
+	String token;
+	private String selectPersonEmail="SELECT p FROM Personen p WHERE p.email = :email";
+	private String email="email";
+	@Override
+	public Personen findUser(String login) {
+		Query q = em.createQuery(selectPersonEmail);
+		q.setParameter("email", login);
+		List<Personen> personen = q.getResultList();
+		if (personen.size() == 1)
+			return personen.get(0);
+		else
+			return null;
+	}
+	/*
+	 * @Override public String loginUser(String email) {
+	 * 
+	 * System.out.println("ik doe beu"); Query q =
+	 * em.createQuery("SELECT p FROM Personen p WHERE p.email = :email");
+	 * q.setParameter("email", email); List<Personen> personen =
+	 * q.getResultList(); if (personen.size() == 1) { if
+	 * (personen.get(0).getRol().equals("Teacher")) { return
+	 * "/teacher/userView.faces?faces-redirect=true"; } else if
+	 * (personen.get(0).getRol().equals("Spotter")) { return
+	 * "/spotter/userView.faces?faces-redirect=true"; } else if
+	 * (personen.get(0).getRol().equals("Admin")) { return
+	 * "/admin/userView.faces?faces-redirect=true"; } } return ""; }
+	 */
+
+	@Override
+	public String login(String email, String wachtwoord) {
+		System.out.println("login");
+		Query q = em.createQuery(selectPersonEmail);
+		q.setParameter("email", email);
+		List<Personen> personen = q.getResultList();
+		if (personen.size() == 1) {
+			if (personen.get(0).getWachtwoord().equals(wachtwoord)) {
+				return getToken(personen.get(0));
+			}
+		}
+		return "fail";
+	}
+
+	@Override
+	public void loginGlassfish(String email, String wachtwoord) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = context.getExternalContext();
+		HttpServletRequest request = (HttpServletRequest) externalContext.getRequest();
+		System.out.println("loginGlassfish");
+		try {
+			request.login(email, wachtwoord);
+			Personen persoon = userEJB.findPerson(email);
+			externalContext.getSessionMap().put("Persoon", persoon);
+			externalContext.getSessionMap().put("id", persoon.getIdpersonen());
+			externalContext.redirect("/VibreWeb/index.xhtml");
+		} catch (ServletException | IOException e) {
+			// Handle unknown username/password in request.login().
+			context.addMessage(null, new FacesMessage("Unknown login"));
+		}
+	}
+
+	@Override
+	public boolean loginCheck() {
+		String login = ctx.getCallerPrincipal().getName();
+		return login.equals("ANONYMOUS");
+	}
+
+	@Override
+	public String returnName(Personen persoon) {
+		Personen p;
+		if (persoon == null) {
+			String login = ctx.getCallerPrincipal().getName();
+			Query q = em.createQuery(selectPersonEmail);
+			q.setParameter("email", login);
+			List<Personen> personen = q.getResultList();
+			if (personen.size() == 1) {
+				p = personen.get(0);
+			} else
+				p = null;
+
+		} else {
+			p = persoon;
+		}
+
+		Query q = em.createQuery("SELECT p FROM Personen p WHERE p.idpersonen = :idpersonen");
+		q.setParameter("idpersonen", p);
+		List<Personen> persoonsNaam = q.getResultList();
+		return persoonsNaam.get(0).getNaam();
+	}
+
+	@Override
+	public void registerUser(String voornaam, String naam, String wachtwoord, String email, String school, String bio) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = context.getExternalContext();
+		HttpServletRequest request = (HttpServletRequest) externalContext.getRequest();
+
+		String hashedPass = createHash(wachtwoord);
+		if (hashedPass == null) {
+			try {
+				externalContext.redirect("/VibreWeb/error/registerError.xhtml");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			Personen p = new Personen(naam, hashedPass, email, school, "Spotter");
+			p.setBio(bio);
+			p.setVoornaam(voornaam);
+			p.setDate(new Date());
+			em.joinTransaction();
+			em.persist(p);
+			try {
+				externalContext.redirect("/VibreWeb/registerSucces.xhtml");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
+	}
+
+	@Override
+	public String createHash(String pass) {
+		MessageDigest digest;
+		try {
+			digest = MessageDigest.getInstance("SHA-256");
+			byte[] hashb = digest.digest(pass.getBytes(StandardCharsets.UTF_8));
+			return Base64.getEncoder().encodeToString(hashb);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	/*
+	 * private String werkendeLoginUser(String naam, String wachtwoord) { Query
+	 * q = em.createQuery("SELECT p FROM Personen p WHERE p.naam = :naam");
+	 * q.setParameter("naam", naam); List<Personen> personen =
+	 * q.getResultList(); if (personen.size() == 1) { if
+	 * (personen.get(0).getWachtwoord().equals(wachtwoord)) {
+	 * 
+	 * return getToken(personen.get(0)); } } return "fail"; }
+	 */
+
+	@Override
+	public String getToken(Personen p) {
+		/*
+		 * Calendar cal = Calendar.getInstance(); cal.set(Calendar.YEAR, 2018);
+		 * cal.set(Calendar.MONTH, Calendar.FEBRUARY);
+		 * cal.set(Calendar.DAY_OF_MONTH, 1); Calendar cal2 =
+		 * Calendar.getInstance(); cal2.set(Calendar.YEAR, 2018);
+		 * cal2.set(Calendar.MONTH, Calendar.MARCH);
+		 * cal2.set(Calendar.DAY_OF_MONTH, 2);
+		 * System.out.println(cal.getTimeInMillis());
+		 * System.out.println(cal.getTime().getTime());
+		 * System.out.println(cal.getTime());
+		 */
+		Calendar cal = Calendar.getInstance();
+		System.out.println(cal.toString());
+		cal.add(Calendar.DAY_OF_WEEK, 1);
+		System.out.println(cal.toString());
+		String compactJws = Jwts.builder().claim("id", p.getIdpersonen()).setSubject(p.getNaam())
+				.setExpiration(cal.getTime())
+				/*
+				 * .setIssuedAt(cal.getTime()) .setExpiration(cal2.getTime())
+				 */
+				.signWith(SignatureAlgorithm.HS512, SECRET).compact();
+		checkKey(compactJws);
+		System.out.println(compactJws);
+		return compactJws;
+
+	}
+
+	private boolean checkKey(String t) {
+		try {
+			Jwts.parser().setSigningKey(SECRET).parseClaimsJws(t);
+
+			Jws<Claims> claims = Jwts.parser().requireSubject("admin").setSigningKey(SECRET).parseClaimsJws(t);
+			return true;
+		} catch (SignatureException e) {
+			System.out.println(e);
+			System.out.println("SignatureException");
+			return false;
+		} catch (MissingClaimException e) {
+			System.out.println("MissingClaimException");
+			return false;
+		} catch (IncorrectClaimException e) {
+			System.out.println("IncorrectClaimException");
+			return false;
+		}
+	}
+
+	@Override
+	public String loginUser(String email) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

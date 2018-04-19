@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="io.jsonwebtoken.impl.crypto.MacProvider"/>
+<fullyQualifiedTypeName name="java.util.Base64"/>
+<fullyQualifiedTypeName name="java.nio.ByteBuffer"/>
+<fullyQualifiedTypeName name="java.nio.ByteOrder"/>
+<fullyQualifiedTypeName name="javax.ws.rs.Consumes"/>
+<fullyQualifiedTypeName name="java.awt.PageAttributes.MediaType"/>
+<fullyQualifiedTypeName name="javax.ws.rs.core.MediaType"/>
+<fullyQualifiedTypeName name="javax.xml.bind.annotation.XmlRootElement"/>
+<fullyQualifiedTypeName name="vibration.JPA.Meting2"/>
+<fullyQualifiedTypeName name="vibration.JPA.Meting"/>
+<fullyQualifiedTypeName name="vibration.EJB.UserManagementEJBLocal"/>
+<fullyQualifiedTypeName name="javax.ejb.LocalBean"/>
+<fullyQualifiedTypeName name="javax.ejb.EJB"/>
+<fullyQualifiedTypeName name="javax.ejb.Stateless"/>
+<fullyQualifiedTypeName name="javax.persistence.PersistenceContext"/>
+<fullyQualifiedTypeName name="vibration.EJB.MetingEJBLocal"/>
+<fullyQualifiedTypeName name="java.io.Serializable"/>
+<fullyQualifiedTypeName name="vibration.EJB.UserManagementEJB"/>
+<fullyQualifiedTypeName name="java.io.ByteArrayInputStream"/>
+<fullyQualifiedTypeName name="java.io.DataInputStream"/>
+<fullyQualifiedTypeName name="java.util.Calendar"/>
+<fullyQualifiedTypeName name="vibration.JPA.Project"/>
+<fullyQualifiedTypeName name="java.lang.Math"/>
+<fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="com.owlike.genson.ext.jaxrs.GensonJsonConverter"/>
+<fullyQualifiedTypeName name="java.lang.StringBuffer"/>
+<fullyQualifiedTypeName name="java.lang.System"/>
+<fullyQualifiedTypeName name="java.sql.Date"/>
+<fullyQualifiedTypeName name="java.util.Date"/>
+<fullyQualifiedTypeName name="javax.ws.rs.Produces"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="javax.ws.rs.HeaderParam"/>
+<fullyQualifiedTypeName name="javax.persistence.NoResultException"/>
+<fullyQualifiedTypeName name="vibration.EJB.ProjectManagementEJB"/>
+<fullyQualifiedTypeName name="vibration.EJB.ProjectManagementEJBLocal"/>
+<fullyQualifiedTypeName name="com.sun.java.accessibility.util.java.awt.CheckboxTranslator"/>
+<fullyQualifiedTypeName name="vibration.JPA.Locaty"/>
+<fullyQualifiedTypeName name="vibration.EJB.LocationEJBLocal"/>
+<fullyQualifiedTypeName name="java.lang.UnsupportedOperationException"/>
+</qualifiedTypeNameHistroy>

@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><ui:insert name="title">Profile Page</ui:insert></title>
+	<link rel="stylesheet"
+		href="/VibreWeb/resources/css/vibrationStyle.css" />
+</h:head>
+<h:body>
+
+	<div id="loginBar"></div>
+	<div id="transition" />
+	<div id="wrapperHeader">
+		<p:commandLink action="#{navigationController.homedirect()}">
+			<h:graphicImage id="logo" value="/resources/images/vibrationLogo.png" />
+		</p:commandLink>
+		<div id="userLog">
+			<h:form id="profileForm">
+				<h:commandButton id="profileButton"
+					value="#{userController.currentUser()}"
+					action="#{userController.userPage()}" />
+			</h:form>
+			<h:graphicImage id="icon" value="/resources/images/loginIcon.png" />
+		</div>
+		<h:inputHidden value="#{projectController.findUserProjects()}" />
+	</div>
+	<h:inputHidden value="#{projectController.findUserProjects()}" />
+	<div id="keuzeTabs">
+		<h:form>
+			<h:commandButton class="active-tab" value="profiel"
+				action="#{navigationController.profiel()}" style="width:34%"/>
+			<h:commandButton class="tab" value="Verander profiel"
+				action="#{navigationController.veranderProfiel()}" style="width:33%"/>
+			<h:commandButton class="tab" value="create project"
+				action="#{navigationController.createProjectPage()}" style="width:33%"/>
+		</h:form>
+	</div>
+
+	<div id="mainBody">
+		<div id="userstuff">
+			<div id="welcome">
+				Welkom
+				<h:outputLabel value="#{userController.currentUser()}" />
+			</div>
+				<div>
+			<h:outputText value="Voornaam: " />
+			<h:outputText value="#{userController.toonVoornaam()}" />
+		</div>
+		<div>
+			<h:outputText value="Naam: " />
+			<h:outputText value="#{userController.toonNaam()}" />
+		</div>
+		<div>
+			<h:outputText value="Opleiding: " />
+			<h:outputText value="#{userController.toonOpleiding()}" />
+		</div>
+		<div>
+			<h:outputText value="School: " />
+			<h:outputText value="#{userController.toonSchool()}" />
+		</div>
+			<h2>Biografie:</h2>
+			<h:outputText value="#{userController.toonBio()}"
+				styleClass="preformatted" />
+			<br></br> <br></br>
+			<h:form>
+				<h:commandButton value="logout" action="#{userController.logout()}" />
+
+			</h:form>
+		</div>
+		<p>Mijn projecten:</p>
+		<div id="mapTable">
+			<div id="leftTable">
+				<h:form>
+					<p:dataTable id="projectTable"
+						value="#{projectController.userProjects}" var="project"
+						selection="#{projectController.projects}" rowKey="#{project.id}"
+						rows="10"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+						rowsPerPageTemplate="5,10,15" paginator="true">
+						<p:ajax event="rowSelect"
+							listener="#{projectController.selectProj}" update="mapScript" />
+
+						<p:column headerText="select All" selectionMode="multiple" style="border-left-color: rgb(93, 115, 121)"/>
+						<p:column headerText="Titel" sortBy="#{project.titel}">
+							<h:outputText value="#{project.titel}" />
+						</p:column>
+						<p:column headerText="Aanmaak Datum"
+							sortBy="#{project.aanmaakDatum}">
+							<h:outputText value="#{project.aanmaakDatum}" />
+						</p:column>
+
+						<p:column headerText="Action" style="border-right-color: rgb(93, 115, 121)">
+							<a href="/VibreWeb/users/project.xhtml?project=#{project.id}">Project</a>
+						</p:column>
+						<f:facet name="footer">
+							<p:commandButton value="verwijderen projecten"
+								update="projectTable"
+								action="#{projectController.verwijderSelectedProject()}" />
+						</f:facet>
+					</p:dataTable>
+				</h:form>
+			</div>
+			<div id="rightMapWrapper">
+				<div id="map" style="top:0px"></div>
+			</div>
+		</div>
+	</div>
+	<h:panelGroup id="mapScript">
+		<h:outputScript>
+			var map;
+			var marker;
+			var infowindow;
+			var messagewindow;
+
+			function initMap() {
+				var lat = parseFloat('#{projectController.selectLat}');
+				var lng = parseFloat('#{projectController.selectLng}');
+				var content = 'Project locatie';
+				map = new google.maps.Map(document.getElementById('map'), {
+					center : {
+						lat : lat,
+						lng : lng
+					},
+					zoom : 10
+				});
+				infowindow = new google.maps.InfoWindow({
+					content : content
+				});
+				var marker = new google.maps.Marker({
+					position : {
+						lat : lat,
+						lng : lng
+					},
+					map : map,
+					title : 'Project Locatie'
+				});
+				google.maps.event.addListener(marker, "click", function() {
+					infowindow.open(map, marker);
+				});
+			}
+		</h:outputScript>
+		<script>
+			initMap();
+		</script>
+
+	</h:panelGroup>
+	<script async="async" defer="defer"
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCZa8pXLrcpSDOohFK4Uis5i0svJPoft_c&amp;callback=initMap"></script>
+</h:body>
+</html>

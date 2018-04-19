@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="VibrEAR">
+        <wb-resource deploy-path="/" source-path="/EarContent" tag="defaultRootSource"/>
+        <dependent-module archiveName="VibreEJB.jar" deploy-path="/" handle="module:/resource/VibreEJB/VibreEJB">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="VibreEJBClient.jar" deploy-path="/" handle="module:/resource/VibreEJBClient/VibreEJBClient">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="VibreWeb.war" deploy-path="/" handle="module:/resource/VibreWeb/VibreWeb">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="VibreREST.war" deploy-path="/" handle="module:/resource/VibreREST/VibreREST">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="VibreJPA.jar" deploy-path="/lib" handle="module:/resource/VibreJPA/VibreJPA">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+    </wb-module>
+</project-modules>

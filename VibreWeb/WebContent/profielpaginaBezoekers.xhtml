@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+
+	<title><ui:insert name="title">Profile Page</ui:insert></title>
+	<link rel="stylesheet"
+		href="/VibreWeb/resources/css/vibrationStyle.css" />
+
+	<f:metadata>
+		<f:viewParam name="gebruiker"
+			value="#{searchController.gebruiker.idpersonen}" required="true" />
+		<f:viewParam name="gebruiker"
+			value="#{specialController.gebruiker.idpersonen}" required="true" />
+	</f:metadata>
+
+</h:head>
+<h:body>
+	<div id="loginBar"></div>
+	<div id="transition" />
+	<div id="wrapperHeader">
+		<p:commandLink action="#{navigationController.homedirect()}">
+			<h:graphicImage id="logo" value="/resources/images/vibrationLogo.png" />
+		</p:commandLink>
+		<h:form id="urlForm">
+			<h:inputHidden id="url" />
+		</h:form>
+		<h:inputHidden value="#{specialController.accesCheck()}" />
+		<h:inputHidden value="#{searchController.maakGebruiker()}" />
+		<h:inputHidden value="#{searchController.findUserPublicProjects()}" />
+		<div id="userLog">
+			<h:form id="profileForm">
+				<h:commandButton id="profileButton"
+					value="#{userController.currentUser()}"
+					action="#{userController.userPage()}"
+					onclick="document.getElementById('url').value = userpage">
+					<f:actionListener binding="#{specialController.urlSet()}" />
+
+				</h:commandButton>
+			</h:form>
+			<h:graphicImage id="icon" value="/resources/images/loginIcon.png" />
+		</div>
+	</div>
+	<div id="keuzeTabs">
+		<h:form>
+			<h:commandButton class="tab" value="home"
+				action="#{navigationController.home()}">
+				<f:actionListener binding="#{specialController.urlSet()}" />
+			</h:commandButton>
+			<h:commandButton class="tab" value="Doorzoek projecten"
+				action="#{navigationController.doorzoekProjecten()}">
+				<f:actionListener binding="#{specialController.urlSet()}" />
+			</h:commandButton>
+			<h:commandButton class="active-tab" value="Doorzoek gebruikers"
+				action="#{navigationController.doorzoekUsers()}">
+				<f:actionListener binding="#{specialController.urlSet()}" />
+			</h:commandButton>
+			<h:commandButton class="tab" value="login"
+				action="#{navigationController.loginPage()}">
+				<f:actionListener binding="#{specialController.urlSet()}" />
+			</h:commandButton>
+			<h:commandButton class="tab" value="register"
+				action="#{navigationController.register()}">
+				<f:actionListener binding="#{specialController.urlSet()}" />
+			</h:commandButton>
+		</h:form>
+	</div>
+	<div id="mainBody">
+		<div>
+			<h:outputText value="Pagina van " />
+			<h:outputText value="#{searchController.gebruikersnaam}" />
+		</div>
+		<div>
+			<h:outputText value="Voornaam: " />
+			<h:outputText value="#{searchController.gebruikerBio}" />
+		</div>
+		<div>
+			<h:outputText value="Naam: " />
+			<h:outputText value="#{searchController.gebruikerBio}" />
+		</div>
+		<div>
+			<h:outputText value="Biografie" />
+			<h:outputText value="#{searchController.gebruikerBio}" />
+		</div>
+		<div>
+			<h:outputText value="Opleiding: " />
+			<h:outputText value="#{searchController.gebruikerBio}" />
+		</div>
+		<div>
+			<h:outputText value="School: " />
+			<h:outputText value="#{searchController.gebruikerBio}" />
+		</div>
+		<div>
+			<h:outputText value="Projecten van " />
+			<h:outputText value="#{searchController.gebruikersnaam}" />
+		</div>
+		<div id="mapTable">
+			<div id="leftTable">
+				<h:form>
+					<p:dataTable value="#{searchController.userProjects}" var="project"
+						selection="#{projectController.project}" rowKey="#{project.id}"
+						rows="10" selectionMode="single"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+						rowsPerPageTemplate="5,10,15" paginator="true">
+						<p:ajax event="rowSelect"
+							listener="#{projectController.selectProj}" update="mapScript" />
+
+						<p:column headerText="Titel">
+							<h:outputText value="#{project.titel}" />
+						</p:column>
+						<p:column headerText="Aanmaak Datum"
+							sortBy="#{project.aanmaakDatum}">
+							<h:outputText value="#{project.aanmaakDatum}" />
+						</p:column>
+
+						<p:column headerText="Type">
+							<h:outputText value="#{project.getTeacherText()}" />
+						</p:column>
+						<p:column headerText="Link">
+							<a href="publicProject.xhtml?project=#{project.id}"> project</a>
+						</p:column>
+					</p:dataTable>
+				</h:form>
+			</div>
+			<div id="rightMapWrapper">
+				<div id="map"></div>
+			</div>
+		</div>
+	</div>
+	<h:panelGroup id="mapScript">
+		<h:outputScript>
+			var map;
+			var marker;
+			var infowindow;
+			var messagewindow;
+
+			function initMap() {
+				var lat = parseFloat('#{projectController.selectLat}');
+				var lng = parseFloat('#{projectController.selectLng}');
+				var content = 'Project locatie';
+				map = new google.maps.Map(document.getElementById('map'), {
+					center : {
+						lat : lat,
+						lng : lng
+					},
+					zoom : 10
+				});
+				infowindow = new google.maps.InfoWindow({
+					content : content
+				});
+				var marker = new google.maps.Marker({
+					position : {
+						lat : lat,
+						lng : lng
+					},
+					map : map,
+					title : 'Project Locatie'
+				});
+				google.maps.event.addListener(marker, "click", function() {
+					infowindow.open(map, marker);
+				});
+			}
+		</h:outputScript>
+		<script>
+			initMap();
+		</script>
+
+	</h:panelGroup>
+	<script async="async" defer="defer"
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCZa8pXLrcpSDOohFK4Uis5i0svJPoft_c&amp;callback=initMap"></script>
+</h:body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+
+
+	<title><ui:insert name="title">Welcome Page</ui:insert></title>
+	<link rel="stylesheet"
+		href="/VibreWeb/resources/css/vibrationStyle.css" />
+</h:head>
+
+
+<h:body>
+	<div id="loginBar"></div>
+	<div id="transition" />
+	<div id="wrapperHeader">
+		<p:commandLink action="#{navigationController.homedirect()}">
+			<h:graphicImage id="logo" value="/resources/images/vibrationLogo.png" />
+		</p:commandLink>
+		<div id="userLog">
+			<h:form id="profileForm">
+				<h:commandButton id="profileButton"
+					value="#{userController.currentUser()}"
+					action="#{userController.userPage()}" />
+			</h:form>
+			<h:graphicImage id="icon" value="/resources/images/loginIcon.png" />
+		</div>
+
+		<!-- foto's in map laden -->
+
+		<h:form id="imageLoading">
+			<h:inputHidden id="Json" value="#{locationController.locaties}" />
+			<h:inputHidden id="idPass" />
+			<h:inputHidden id="refresh" value="#{locationController.refresh}" />
+			<h:commandLink id="passId" action="#{locationController.putFotoId()}">
+				<f:ajax execute="@form" render="image" />
+			</h:commandLink>
+			<h:commandLink id="render"
+				action="#{locationController.resetRender()}">
+				<f:ajax execute="@form" render="image" />
+			</h:commandLink>
+			<h:commandLink id="dummy" action="#{locationController.dummy()}" />
+		</h:form>
+
+
+
+	</div>
+
+	<div id="keuzeTabs">
+		<h:form>
+			<h:commandButton class="active-tab" value="home"
+				action="#{navigationController.home()}" />
+			<h:commandButton class="tab" value="Doorzoek projecten"
+				action="#{navigationController.doorzoekProjecten()}" />
+			<h:commandButton class="tab" value="Doorzoek gebruikers"
+				action="#{navigationController.doorzoekUsers()}" />
+			<h:commandButton class="tab" value="login"
+				action="#{navigationController.loginPage()}" />
+			<h:commandButton class="tab" value="Register"
+				action="#{navigationController.register()}" />
+		</h:form>
+	</div>
+
+	<div id="mainBody">
+		<div id="tekst">Lorem ipsum dolor sit amet, consectetur
+			adipiscing elit. Phasellus imperdiet, nulla et dictum interdum, nisi
+			lorem egestas odio, vitae scelerisque enim ligula venenatis dolor.
+			Maecenas nisl est, ultrices nec congue eget, auctor vitae massa.
+			Fusce luctus vestibulum augue ut aliquet. Mauris ante ligula,
+			facilisis sed ornare eu, lobortis in odio. Praesent convallis urna a
+			lacus interdum ut hendrerit risus congue. Nunc sagittis dictum nisi,
+			sed ullamcorper ipsum dignissim ac. In at libero sed nunc venenatis
+			imperdiet sed ornare turpis. Donec vitae dui eget tellus gravida
+			venenatis. Integer fringilla congue eros non fermentum. Sed dapibus
+			pulvinar nibh tempor porta. Cras ac leo purus. Mauris quis diam
+			velit.</div>
+
+		<div id="mapWrapper">
+			<div id="map"></div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		var map;
+		var messagewindow;
+		var jsonString = document.getElementById("imageLoading:Json").value;
+		var jsonObject = JSON.parse(jsonString);
+		var refresh
+
+		function resetRender() {
+			document.getElementById("imageLoading:render").click();
+		}
+
+		function getId() {
+			var id = document.getElementById("imageId").innerHTML;
+			document.getElementById("imageLoading:idPass").value = id;
+			document.getElementById("imageLoading:passId").click();
+		}
+
+		function refresh() {
+			refresh = document.getElementById("imageLoading:refresh").value;
+			if (refresh == 0) {
+				document.getElementById("imageLoading:dummy").click();
+				refresh = refresh + 1;
+			}
+		}
+
+		function initMap() {
+			map = new google.maps.Map(document.getElementById('map'), {
+				center : {
+					lat : 51.05879387,
+					lng : 3.712971
+				},
+				zoom : 5
+			});
+			infowindow = new InfoBubble();
+			var spotter = "/VibreWeb/resources/images/spointer.png"
+			var stem = "/VibreWeb/resources/images/tointer.png"
+			var marker, i;
+			for (i in jsonObject) {
+				marker = new google.maps.Marker({
+					position : {
+						lat : jsonObject[i]['lat'],
+						lng : jsonObject[i]['lng']
+					},
+					icon : spotter,
+					map : map,
+					title : jsonObject[i]['adres'] + ' '
+							+ jsonObject[i]['project titel']
+				});
+				var content = '<div id="markerInfo">'
+						+ '<div id="imageId" style="display: none;">'
+						+ jsonObject[i]['image id']
+						+ '</div>'
+						+ '<div id="projectInfo">'
+						+ 'Locatie: '
+						+ jsonObject[i]['naam']
+						+ '<br/>'
+						+ 'adres: '
+						+ jsonObject[i]['adres']
+						+ '<br/>'
+						+ 'titel van project: '
+						+ jsonObject[i]['project titel']
+						+ '<br/>'
+						+ 'eigenaar van project: '
+						+ jsonObject[i]['eigenaar']
+						+ '</div>'
+						+ '<h:panelGroup id="image" layout="block" rendered="false"><p:graphicImage id="foto" value="#{userController.foto}"><f:param name="id" value="#{locationController.fotoId}" /></p:graphicImage></h:panelGroup>'
+						+ '</div>';
+
+				google.maps.event.addListener(marker, 'click', (function(
+						marker, content, infowindow) {
+					return function() {
+						infowindow.setContent(content);
+						infowindow.open(map, marker);
+						getId();
+						setTimeout(refresh(), 100);
+					};
+
+				})(marker, content, infowindow));
+				google.maps.event.addListener(infowindow, 'closeclick',
+						function() {
+							resetRender();
+						});
+			}
+		}
+	</script>
+	<script type="text/javascript"
+		src="/VibreWeb/resources/javascript/infobubble.js"></script>
+	<script async="async" defer="defer"
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCZa8pXLrcpSDOohFK4Uis5i0svJPoft_c&amp;callback=initMap"></script>
+
+</h:body>
+
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> 
+
+<h:head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+
+	<title>
+		<ui:insert name="title">Submit Report</ui:insert>
+	</title>
+  
+	<f:metadata>
+		<f:viewParam name="project" value="#{userController.project.id}" />
+	</f:metadata>
+	
+</h:head> 
+
+<h:body> 
+
+<div class="jumbotron jumbotron-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-lg-12">
+                <h1 class="h1">
+                    Experimenten <small></small></h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="well well-sm">
+            		<h:form>
+	    	<h:dataTable class="table table-striped custab" value="#{userController.findExperiment()}" var="experiment">
+	    
+	    	<h:column>
+				<f:facet name="header">
+					<h:outputText value="ID" />
+				</f:facet>
+				<h:outputText value="#{experiment.id}" />
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Titel" />
+				</f:facet>
+				<h:outputText value="#{experiment.titel}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Datum" />
+				</f:facet>
+				<h:outputText value="#{userController.niceDate(experiment)}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText class="text-center" value="Action" />
+				</f:facet>
+				<a class='btn btn-info btn-xs' href="meting.xhtml?experiment=#{experiment.id}"><span class="glyphicon glyphicon-edit"></span> Zie Meting</a>
+			</h:column>
+							
+	    
+	    	</h:dataTable>
+	    
+		
+		</h:form>
+ 			
+            </div>
+        </div>
+    </div>
+</div>
+
+</h:body> 
+
+</html>

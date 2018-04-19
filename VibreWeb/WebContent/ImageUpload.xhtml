@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<link rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+	<title><ui:insert name="title">Upload page</ui:insert></title>
+	<style>
+#map {
+	height: 100%;
+}
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+</style>
+	<f:metadata>
+		<f:viewParam name="project" value="#{imageController.project.id}" required ="true"/>
+		</f:metadata>
+
+<title>Selecteer een foto en titel voor aan het project toe te voegen</title>
+</h:head>
+
+
+	
+<h:body>
+    
+    	
+    	<h:form id="form" enctype="multipart/form-data">
+  		<h:inputFile id="file" value="#{imageController.file}"/>
+  		<h:inputText value="#{imageController.naam}"/>
+  		<h:commandButton value="Upload"
+    	  action="#{imageController.uploadProj()}"/>
+    	 <br></br>
+    	<h:outputText value="#{imageController.foutMessage}" color='red'/>
+    	  
+    	
+        
+        
+        
+        </h:form>
+    
+</h:body>
+</html>

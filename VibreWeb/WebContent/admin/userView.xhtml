@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<link rel="stylesheet"
+		href="/VibreWeb/resources/css/vibrationStyle.css" />
+	<title><ui:insert name="title">Admin page</ui:insert></title>
+</h:head>
+<h:body>
+
+	<div id="loginBar"></div>
+	<div id="transition" />
+	<div id="wrapperHeader">
+		<h:inputHidden value="#{projectController.findUserProjects()}" />
+		<p:commandLink action="#{navigationController.homedirect()}">
+			<h:graphicImage id="logo" value="/resources/images/vibrationLogo.png" />
+		</p:commandLink>
+		<div id="userLog">
+			<h:form id="profileForm">
+				<h:commandButton id="profileButton"
+					value="#{userController.currentUser()}"
+					action="#{userController.userPage()}" />
+			</h:form>
+			<h:graphicImage id="icon" value="/resources/images/loginIcon.png" />
+		</div>
+
+	</div>
+	<div id="keuzeTabs">
+		<h:form>
+			<h:commandButton class="active-tab" value="users"
+				action="#{navigationController.profiel()}" />
+			<h:commandButton class="tab" value="Verander profiel"
+				action="#{navigationController.veranderProfiel()}" />
+			<h:commandButton class="tab" value="projecten"
+				action="#{navigationController.createProjectPage()}" />
+			<h:commandButton class="tab" value="metingen"
+				action="#{navigationController.createProjectPage()}" />
+			<h:commandButton class="tab" value="create project"
+				action="#{navigationController.createProjectPage()}" />
+		</h:form>
+	</div>
+
+	<div id="mainBody">
+		<div id="welcome">
+			<h1>
+				Welkom
+				<h:outputLabel value="#{userController.currentUser()}" />
+			</h1>
+		</div>
+		<h2>Biografie:</h2>
+		<h:outputText value="#{userController.toonBio()}"
+			styleClass="preformatted" />
+		<br></br> <br></br>
+		<h:form>
+			<h:commandButton value="logout" action="#{userController.logout()}" />
+
+		</h:form>
+		<p>Mijn projecten:</p>
+		<div id="mapTable">
+			<div>
+				<h:form>
+					<p:dataTable id="userTable"
+						value="#{userController.findAllUsers()}" var="user"
+						selection="#{userController.users}" rowKey="#{user.idpersonen}"
+						rows="10"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+						rowsPerPageTemplate="5,10,15" paginator="true">
+
+						<p:column headerText="select All" selectionMode="multiple" />
+						<p:column headerText="ID" sortBy="#{user.idpersonen}">
+							<h:outputText value="#{user.idpersonen}" />
+						</p:column>
+
+						<p:column headerText="Naam" sortBy="#{user.naam}">
+							<h:outputText value="#{user.naam}" />
+						</p:column>
+
+						<p:column headerText="Action">
+							<a
+								href="/VibreWeb/profielpaginaBezoekers.xhtml?gebruiker=#{user.idpersonen}">Profielpagina</a>
+						</p:column>
+						<f:facet name="footer">
+							<p:commandButton value="verwijderen users"
+								update="userTable"
+								action="#{userController.verwijderSelectedUsers()}" />
+						</f:facet>
+					</p:dataTable>
+				</h:form>
+			</div>
+		</div>
+	</div>
+</h:body>
+</html>

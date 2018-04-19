@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<h:head>
+	<link rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+	<title><ui:insert name="title">Login Page</ui:insert></title>
+</h:head>
+<h:body>
+
+	<div class="jumbotron jumbotron-sm">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12 col-lg-12">
+					<h1 class="h1">
+						register <small></small>
+					</h1>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<h:form>
+		
+
+	<p>Naam*</p>
+		<h:inputText id="j_username" type="text" name="j_username"
+			value="#{userController.login}" required="true" />
+			<br/><br/>
+		<p>Wachtwoord*</p>
+		<h:inputSecret id="j_password" type="secret" name="j_password"
+			value="#{userController.wachtwoord}" />
+			<br/><br/>
+			<p>School</p>
+		<h:inputText id="j_school" type="secret" name="j_school"
+			value="#{userController.school}" />	
+			<br/><br/>
+			<p>Emailadres*</p>
+		<h:inputText id="j_email" type="secret" name="j_email"
+			value="#{userController.email}" />	
+			<br/><br/>
+			
+			<h:selectOneRadio value="#{userController.rol}">
+   			<f:selectItem itemValue="Teacher" itemLabel="Teacher" />
+   			<f:selectItem itemValue="Spotter" itemLabel="Spotter" />
+   		</h:selectOneRadio>
+   		
+   		<br/>
+		<p>*required field</p>	
+		<br/>
+		<h:commandButton
+			style="margin-left:350px;float:left;hight:100px;width:200px"
+			value="Register" action="#{userController.registerUser()}"
+			class="btn btn-primary pull-left" />
+
+
+	</h:form>
+
+</h:body>
+</html>

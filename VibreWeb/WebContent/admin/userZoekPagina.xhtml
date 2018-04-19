@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<link rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+	<title><ui:insert name="title">Search Page</ui:insert></title>
+</h:head>
+<h:body>
+
+	<div class="jumbotron jumbotron-sm">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12 col-lg-12">
+					<h1 class="h1">
+						Start <small></small>
+					</h1>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<h:form>
+	
+	<h:inputText value="#{userController.userZoekNaam}"/>
+            
+   <h:outputLabel style="margin-right:50px" value="Zoeken" />	
+		
+	<h:dataTable class="table table-striped custab"
+				value="#{userController.zoekUsers()}" var="gebruiker">
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Titel" />
+					</f:facet>
+					<h:outputText value="#{gebruiker.naam}" />
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText class="text-center" value="Action" />
+					</f:facet>
+					<a class='btn btn-info btn-xs'
+						href="../users/profielpaginaBezoekers.xhtml?gebruiker=#{gebruiker.idpersonen}"><span
+						class="glyphicon glyphicon-edit"></span>Naar profiel</a>
+				</h:column>
+			</h:dataTable>
+
+
+
+	</h:form>
+
+</h:body>
+</html>

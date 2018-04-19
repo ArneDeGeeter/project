@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><ui:insert name="title">Login Page</ui:insert></title>
+	<link rel="stylesheet"
+		href="/VibreWeb/resources/css/vibrationStyle.css" />
+</h:head>
+<h:body>
+	<div id="loginBar"></div>
+	<div id="transition" />
+	<div id="wrapperHeader">
+		<p:commandLink action="#{navigationController.homedirect()}">
+			<h:graphicImage id="logo" value="/resources/images/vibrationLogo.png" />
+		</p:commandLink>
+		<div id="userLog">
+			<h:form id="profileForm">
+				<h:commandButton id="profileButton"
+					value="#{userController.currentUser()}"
+					action="#{userController.userPage()}" />
+			</h:form>
+			<h:graphicImage id="icon" value="/resources/images/loginIcon.png" />
+		</div>
+		<h:inputHidden id="user-get" value="#{userController.geefPersoon()}" />
+	</div>
+	<div id="keuzeTabs">
+		<h:form>
+			<h:commandButton class="tab" value="profiel"
+				action="#{navigationController.profiel()}" style="width:33%" />
+			<h:commandButton class="active-tab" value="Verander profiel"
+				action="#{navigationController.veranderProfiel()}" style="width:34%" />
+
+			<h:commandButton class="tab" value="create project"
+				action="#{navigationController.createProjectPage()}"
+				style="width:33%" />
+		</h:form>
+	</div>
+	<div id="mainBody" style="width: 500px;">
+		<div id="updateUser">
+			<p>Algemene Accountinstellingen</p>
+			<h:form id="infoForm">
+				<h:panelGrid id="panel" columns="2" border="0" cellpadding="10"
+					cellspacing="1" style="text-align:left">
+					<h:outputLabel value="Voornaam" />
+					<h:inputText value="#{userController.voornaam}" />
+					<h:outputLabel value="Naam" />
+					<h:inputText value="#{userController.login}" />
+					<h:outputLabel value="Email" />
+					<h:outputLabel value="#{userController.email}" />
+					<h:outputLabel value="School" />
+					<h:inputText value="#{userController.school}" />
+					<h:outputLabel style="margin-right:50px" value="Opleiding" />
+					<h:inputText value="#{userController.opleiding}" />
+					<h:outputLabel value="Bio" />
+					<h:inputTextarea row="10" col="10" value="#{userController.bio}" />
+				</h:panelGrid>
+
+				<h:commandButton value="Opslaan"
+					action="#{userController.wijzigUser()}">
+				</h:commandButton>
+				<h:messages globalOnly="true" />
+			</h:form>
+		</div>
+	</div>
+</h:body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<link rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+	<title><ui:insert name="title">Profielpagina</ui:insert></title>
+	<style>
+#map {
+	height: 100%;
+}
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+</style>
+
+<f:metadata>
+		<f:viewParam name="gebruiker" value="#{userController.gebruiker.idpersonen}" required ="true"/>
+	</f:metadata>
+
+</h:head>
+<h:body>
+	<h:inputHidden value="#{userController.maakGebruikersNaam()}" />
+
+
+	<div class="jumbotron jumbotron-sm">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12 col-lg-12">
+					<h1 class="h1">
+						<h:outputText value="#{userController.gebruikersnaam}" />
+						<h:outputText value="'s Pagina" /> <small></small>
+					</h1>
+
+					
+					
+					
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<h:form>
+		
+		<h:outputText value="#{userController.gebruikersnaam}" />
+		<h:outputText value="'s Projecten" />
+		
+			<h:dataTable class="table table-striped custab"
+				value="#{userController.findUserPublicProjects()}" var="project">
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="ID" />
+					</f:facet>
+					<h:outputText value="#{project.id}" />
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Titel" />
+					</f:facet>
+					<h:outputText value="#{project.titel}" />
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText class="text-center" value="Action" />
+					</f:facet>
+					<a class='btn btn-info btn-xs'
+						href="../admin/project.xhtml?project=#{project.id}"><span
+						class="glyphicon glyphicon-edit"></span>Experiment</a>
+				</h:column>
+			</h:dataTable>
+		</h:form>
+	</div>
+
+	<h:form>
+		<h:commandButton
+			style="margin-right:350px;float:right;hight:100px;width:200px"
+			value="Voeg foto toe" action="#{userController.uploadPagina()}"
+			class="btn btn-primary pull-right" />
+		<h:commandButton
+			style="margin-left:350px;float:left;hight:100px;width:200px"
+			value="Toon foto's" action="#{imageController.getData()}"
+			class="btn btn-primary pull-left" />
+		<h:commandButton style="margin-left:350px;hight:100px;width:200px"
+			value="Toon foto's" action="#{userController.experiment()}" />
+	</h:form>
+
+</h:body>
+</html>

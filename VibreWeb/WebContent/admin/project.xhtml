@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<link rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+	<title><ui:insert name="title">Admin page</ui:insert></title>
+	<style>
+#map {
+	height: 100%;
+}
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+</style>
+	<f:metadata>
+		<f:viewParam name="project" value="#{projectController.project.id}" required ="true"/>
+		<f:viewParam name="project" value="#{imageController.project.id}" required="true"/>
+	</f:metadata>
+</h:head>
+<h:body>
+<h:inputHidden value="#{imageController.getProjData()}" />
+
+	<h:inputHidden id="lat" value="#{locationController.getLat()}" />
+	<h:inputHidden id="lng" value="#{locationController.getLng()}" />
+	<div class="jumbotron jumbotron-sm">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12 col-lg-12">
+					<h1 class="h1">
+						Project pagina <small></small>
+					</h1>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<h:form>
+		
+			
+		<p>Beschrijving:</p>
+			<h:outputText value="#{projectController.toonBeschrijving()}" styleClass="preformatted"/>	
+			
+		<a class='btn btn-info btn-xs'
+						href="../ImageUpload.xhtml?project=#{projectController.project.id}"><span
+						class="glyphicon glyphicon-edit"></span>Voeg foto toe</a>	
+			
+		<h:commandButton
+			style="margin-right:350px;float:right;hight:100px;width:200px"
+			value="Verwijder project" action="#{projectController.verwijderProject()}"
+			class="btn btn-primary pull-right" />
+		
+		
+			<h:dataTable class="table table-striped custab"
+				value="#{projectController.findExperiments()}" var="experiment">
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="ID" />
+					</f:facet>
+					<h:outputText value="#{experiment.id}" />
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Titel" />
+					</f:facet>
+					<h:outputText value="#{experiment.titel}" />
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText class="text-center" value="Action" />
+					</f:facet>
+					<a class='btn btn-info btn-xs'
+						href="experiment.xhtml?experiment=#{experiment.id}"><span
+						class="glyphicon glyphicon-edit"></span>Meting</a>
+				</h:column>
+			</h:dataTable>
+		</h:form>
+	</div>
+	<p:dataTable id="docId" var="row" value="#{imageController.fotoData}"
+		editable="false" widgetVar="documentTable">
+		<p:column headerText="Image">
+			<p:graphicImage value="#{imageController.foto}">
+				<f:param name="id" value="#{row.id}" />
+			</p:graphicImage>
+			<h:outputLabel value="#{row.foto_naam}" />
+			
+			<h:commandButton
+			style="margin-right:150px;float:right;hight:50px;width:120px"
+			value="Verwijder" action="#{imageController.verwijderFoto(row.id)}"
+			class="btn btn-primary pull-right"/>
+			
+		</p:column>
+	</p:dataTable>
+	<div id="map"></div>
+	
+	<script>
+		var map;
+		var marker;
+		var infowindow;
+		var messagewindow;
+
+		function initMap() {
+			var lat = parseFloat(document.getElementById('lat').value);
+			var lng = parseFloat(document.getElementById('lng').value);
+			map = new google.maps.Map(document.getElementById('map'), {
+				center : {
+					lat : lat,
+					lng : lng
+				},
+				zoom : 10
+			});
+			infowindow = new google.maps.InfoWindow({
+				content : '<div id="form">'+
+				'<h:outputText value="#{locationController.getAdres()}" />'+
+				'</div>'
+			});
+			messagewindow = new google.maps.InfoWindow({
+				content : document.getElementById('message')
+			});
+			var marker = new google.maps.Marker({
+				position : {
+					lat : lat,
+					lng : lng
+				},
+				map : map,
+				title : 'Project Locatie'
+			});
+			google.maps.event.addListener(marker, "click", function() {
+				infowindow.open(map, marker);
+			});
+		}
+	</script>
+	<script async="async" defer="defer"
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCZa8pXLrcpSDOohFK4Uis5i0svJPoft_c&amp;callback=initMap"></script>
+</h:body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<script src="https://cdn.klokantech.com/maptilerlayer/v1/index.js"></script>
+	<link rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+	<title><ui:insert name="title">Admin page</ui:insert></title>
+	<style>
+#map {
+	height: 100%;
+}
+
+.pac-card {
+	margin: 10px 10px 0 0;
+	border-radius: 2px 0 0 2px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	outline: none;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+	background-color: #fff;
+	font-family: Roboto;
+}
+
+#pac-container {
+	padding-bottom: 12px;
+	margin-right: 12px;
+}
+
+.pac-controls {
+	display: inline-block;
+	padding: 5px 11px;
+}
+
+.pac-controls label {
+	font-family: Roboto;
+	font-size: 13px;
+	font-weight: 300;
+}
+
+#pac-input {
+	background-color: #fff;
+	font-family: Roboto;
+	font-size: 15px;
+	font-weight: 300;
+	margin-left: 12px;
+	padding: 0 11px 0 13px;
+	text-overflow: ellipsis;
+	width: 400px;
+}
+
+#pac-input:focus {
+	border-color: #4d90fe;
+}
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+</style>
+</h:head>
+<h:body>
+	<div>
+		<h:form id="locatie">
+			<h:inputHidden id="naam" />
+			<h:inputHidden id="adres" />
+			<h:inputHidden id="latlng" />
+			<h:commandLink id="setLocatie"
+				action="#{locationController.setLocation()}">
+				<f:ajax execute="@form" />
+			</h:commandLink>
+		</h:form>
+		<h:form>
+			<p>titel*</p>
+			<h:inputText id="j_username" type="text" name="j_username"
+				value="#{projectController.titel}" required="true" />
+			<br />
+			<br />
+			<h:selectOneRadio value="#{projectController.type}">
+				<f:selectItem itemValue="publiek" itemLabel="publiek" />
+				<f:selectItem itemValue="privé" itemLabel="privé" />
+			</h:selectOneRadio>
+			<h:commandButton
+				style="margin-left:350px;float:left;hight:100px;width:200px"
+				value="Register" action="#{projectController.createProject()}"
+				class="btn btn-primary pull-left" />
+		</h:form>
+	</div>
+
+	<p>test</p>
+	<p>test 2</p>
+	<input id="pac-input" class="controls" type="text"
+		placeholder="Search Box" />
+	<div id="map" />
+
+
+	<script type="text/javascript">
+		var map;
+		var messagewindow;
+		var marker;
+		var markers = [];
+		var infowindows =[];
+		var perMarker;
+		var infowindow;
+		var bevestigd = false;
+		var content = '<div>'
+				+ '<table>'
+				+ '<tr>'
+				+ '<td>Naam:</td>'
+				+ '<td><input type="text" id="naam" /></td>'
+				+ '</tr>'
+				+ '<tr>'
+				+ '<td>Adres:</td>'
+				+ '<td><input type="text" id="adres" /></td>'
+				+ '</tr>'
+				+ '<td></td>'
+				+ '<td><input type="button" value="pin locatie" onclick="setLocation()" /></td>'
+				+ '</table>' + '</div>';
+
+		function LocationCenter(controlDiv, map) {
+
+			// Set CSS for the control border.
+			var controlUI = document.createElement('div');
+			controlUI.style.backgroundColor = '#fff';
+			controlUI.style.border = '2px solid #fff';
+			controlUI.style.borderRadius = '3px';
+			controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+			controlUI.style.cursor = 'pointer';
+			controlUI.style.marginBottom = '22px';
+			controlUI.style.textAlign = 'center';
+			controlUI.title = 'Click om huidige locatie te krijgen';
+			controlDiv.appendChild(controlUI);
+
+			// Set CSS for the control interior.
+			var controlText = document.createElement('div');
+			controlText.style.color = 'rgb(25,25,25)';
+			controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+			controlText.style.fontSize = '16px';
+			controlText.style.lineHeight = '38px';
+			controlText.style.paddingLeft = '5px';
+			controlText.style.paddingRight = '5px';
+			controlText.innerHTML = 'GPS-locatie';
+			controlUI.appendChild(controlText);
+
+			controlUI.addEventListener('click', function() {
+				getLocation(map);
+			});
+
+		}
+		function initMap() {
+			var lat = 0;//parseFloat('#{locationController.getLat()}');
+			var lng = 0;//parseFloat('#{locationController.getLng()}');
+
+			map = new google.maps.Map(document.getElementById('map'), {
+				center : {
+					lat : lat,
+					lng : lng
+				},
+				zoom : 10
+			});
+
+			var locationCenterDiv = document.createElement('div');
+			var locationCenter = new LocationCenter(locationCenterDiv, map);
+
+			locationCenterDiv.index = 1;
+			map.controls[google.maps.ControlPosition.BOTTOM_CENTER]
+					.push(locationCenterDiv);
+
+			getLocation(map);
+
+			
+
+			//Zoeken naar specifiek adres
+			var input = document.getElementById('pac-input');
+			var searchBox = new google.maps.places.SearchBox(input);
+			map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
+			
+			infowindow = new google.maps.InfoWindow({
+				content : content
+			});
+
+			map.addListener('bounds_changed', function() {
+				searchBox.setBounds(map.getBounds());
+			});
+
+			searchBox.addListener('places_changed', function() {
+				var places = searchBox.getPlaces();
+
+				if (places.length == 0) {
+					return;
+				}
+				if (!bevestigd) {
+					marker.setMap(null);
+					markers.forEach(function(marker1) {
+						marker1.setMap(null);
+					});
+					markers = [];
+				} else {
+					infowindow.setContent("locatie bevestigd");
+					
+				}
+				var bounds = new google.maps.LatLngBounds();
+				var i=0;
+				places.forEach(function(place) {
+		
+					if (!place.geometry) {
+						console.log("bevat geen geometrie");
+						return;
+					}
+					if (!bevestigd) {
+						markers.push(new google.maps.Marker({
+							map : map,
+							title : place.name,
+							position : place.geometry.location
+						}));
+					
+					}
+					else{
+						infowindows.push(new google.maps.InfoWindow({
+						content: place.name,
+						position : place.geometry.location
+					}));
+						infowindows[i].open(map);		
+					}
+					i=i+1;
+					if (place.geometry.viewport) {
+						// Only geocodes have viewport.
+						bounds.union(place.geometry.viewport);
+					} else {
+						bounds.extend(place.geometry.location);
+					}
+				});
+				
+				var j=0
+				markers.forEach(function(marker1){
+					infowindows.push(new google.maps.InfoWindow({
+						content: content + j
+						}));
+					google.maps.event.addListener(marker1, 'click',
+							function(marker1,infowindows,j) {
+						alert(infowindows[j].getContent())
+								infowindows[j].open(map, marker1);
+							}(marker1,infowindows,j));
+					j=j+1;
+				});
+				map.fitBounds(bounds);
+			});
+		}
+		function handleLocationError(browserHasGeolocation, markers, pos) {
+			markers[0].setPosition(pos);
+			markers[0]
+					.setTitle(browserHasGeolocation ? 'Error: The Geolocation service failed.'
+							: 'Error: Your browser doesn\'t support geolocation.');
+		}
+		function getLocation(map) {
+			infowindow = new google.maps.InfoWindow({
+				content : content
+			});
+			if (!bevestigd) {
+				markers.forEach(function(marker1) {
+					marker1.setMap(null);
+				});
+				markers = [];
+			} else {
+				infowindow.setContent("locatie bevestigd");
+			}
+
+			//eigen locatie gebruiken
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(function(position) {
+					var pos = {
+						lat : position.coords.latitude,
+						lng : position.coords.longitude
+					};
+					if (!bevestigd) {
+						marker=new google.maps.Marker({
+							map : map,
+							title : "huidige locatie",
+							position : pos
+						});
+						google.maps.event.addListener(marker, 'click',
+								function() {
+									infowindow.open(map, marker);
+								});
+					}
+					map.setCenter(pos);
+
+				}, function(){
+					handleLocationError(true, markers, map.getCenter());
+				});
+			} else {
+				// Browser doesn't support Geolocation
+				handleLocationError(false, markers, map.getCenter());
+			}
+		}
+		function setLocation() {
+			
+			document.getElementById("locatie:naam").value = escape(document
+					.getElementById("naam").value);
+			document.getElementById("locatie:adres").value = escape(document
+					.getElementById("adres").value);
+			document.getElementById("locatie:latlng").value = marker
+					.getPosition();
+			alert(document.getElementById("locatie:latlng").value)
+			//document.getElementById("locatie:setLocatie").click();
+			bevestigd = true;
+			content = "locatie bevestigd";
+			infowindow.setContent(content);
+		}
+	</script>
+	<script async="async" defer="defer"
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCZa8pXLrcpSDOohFK4Uis5i0svJPoft_c&amp;libraries=places&amp;callback=initMap"></script>
+</h:body>
+</html>

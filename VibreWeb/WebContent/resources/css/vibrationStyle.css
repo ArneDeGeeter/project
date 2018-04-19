@@ -1,0 +1,530 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	background-image: url("/VibreWeb/resources/images/brug5.jpg");
+	background-size: cover;
+	background-repeat: no-repeat;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#transition {
+	height: 20px;
+	background: linear-gradient(to bottom, #fe9819, #fe98199c);
+}
+
+#loginBar {
+	position: relative;
+	height: 64px;
+	background: linear-gradient(to right, #a5d6e7, #1c81a4);
+}
+
+#loginInput input {
+	background: none;
+	/* border: none; */
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	/* border-bottom: orange; */
+	/* border-bottom: solid; */
+	border-bottom-color: #db9e26;
+	border-bottom-width: 1.5px;
+	border-bottom-style: solid;
+}
+
+#loginInput {
+	text-align: left;
+	margin: auto;
+	width: 150px;
+	position: relative;
+}
+
+#createProj p {
+	display: block;
+	-webkit-margin-before: 1em;
+	-webkit-margin-after: 0em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+}
+
+#createProj {
+	position: relative;
+	margin: auto;
+	width: 210px;
+}
+
+#updateUser {
+	margin: auto;
+	position: relative;
+	width: 250px;
+	height: 400px;
+	text-align: center;
+}
+
+#updateUser p {
+	font-size: 30px;
+	font-weight: bold;
+	color: #095e78;
+	-webkit-margin-before: 0em;
+	-webkit-margin-after: 0em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+}
+
+#infoForm {
+	position: relative;
+	top: 15px;
+}
+
+#createProjButton {
+	text-align: center;
+	padding-bottom: 50px;
+}
+
+#loginBar::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 10px;
+	background-size: 40px 200px;
+	background-image: radial-gradient(circle at 20px -35px, transparent 41px, #fe9819 20px);
+}
+
+#loginBar::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 15px;
+	background-size: 80px 80px;
+	background-image: radial-gradient(circle at 20px 52px, #fe9819 50px, transparent 21px);
+}
+
+#wrapperHeader {
+	font-size: 100px;
+	text-align: center;
+	width: 100%;
+	text-align: center;
+}
+
+#createProjButton input[type="submit"] {
+	height: 50px;
+	width: 500px;
+}
+
+#keuzeTabs {
+	height: 50px;
+	text-align: center;
+	font-size: 50px;
+	box-shadow: 1px 1px 5px black;
+}
+
+.preformatted {
+	white-space: pre-wrap;
+}
+
+#logo {
+	height: 165px;
+	position: absolute;
+	top: -55px;
+	right: 0px;
+	left: 0px;
+}
+
+.active-tab {
+	width: 20%;
+	float: left;
+	background-color: rgba(238, 161, 2, 0.45);
+	/* border: none; */
+	position: relative;
+	height: 50px;
+	top: 0;
+	font-size: 20px;
+	/* background: transparent; */
+	border: solid;
+	border-color: rgba(255, 184, 42, 0.84);
+	border-width: 1px;
+	border-right-width: 2px;
+}
+
+.tab {
+	width: 20%;
+	float: left;
+	background-color: rgba(233, 161, 18, 0.83);
+	border: none;
+	position: relative;
+	height: 50px;
+	top: 0;
+	font-size: 20px;
+	box-shadow: 0px 1px 1px grey;
+}
+
+.tab:hover {
+	background-color: rgb(130, 133, 113, 0.84);;
+}
+
+.error-message {
+	color: #ffc300;
+}
+
+#mainBody {
+	position: relative;
+	height: 100%;
+	border-width: 0px;
+	width: 75%;
+	margin: auto;
+	box-shadow: 0px 1px 1px black;
+	/* background: linear-gradient(to bottom, #a4d5e6, #2084a6); */
+	top: 2px;
+	background-color: rgb(53, 144, 176, 0.95);
+	/* background-color: white; */
+	border-style: double;
+	border: solid;
+	border-color: #107192;
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
+	border-bottom-left-radius: 15px;
+	border-bottom-right-radius: 15px;
+	border-bottom-left-radius: 15px;;
+}
+
+#mainBodyReg {
+	position: relative;
+	/* height: 100%; */
+	border-width: 0px;
+	width: 321px;
+	margin: auto;
+	box-shadow: 0px 1px 1px black;
+	/* background: linear-gradient(to bottom, #a4d5e6, #2084a6); */
+	top: 2px;
+	background-color: rgb(53, 144, 176, 0.95);
+	/* background-color: white; */
+	border-style: double;
+	border: solid;
+	border-color: #107192;
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
+	border-bottom-left-radius: 15px;
+	border-bottom-right-radius: 15px;
+}
+
+#mainBodyLogin {
+	position: relative;
+	/* height: 100%; */
+	border-width: 0px;
+	width: 321px;
+	margin: auto;
+	box-shadow: 0px 1px 1px black;
+	/* background: linear-gradient(to bottom, #a4d5e6, #2084a6); */
+	top: 2px;
+	background-color: rgb(53, 144, 176, 0.95);
+	/* background-color: white; */
+	border-style: double;
+	border: solid;
+	border-color: #107192;
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
+	border-bottom-left-radius: 15px;
+	border-bottom-right-radius: 15px;
+}
+
+#registerForm {
+	margin: auto;
+	width: 50%;
+	text-align: center;
+}
+
+#loginForm {
+	-webkit-margin-before: 1em;
+	text-align: center;
+	position: relative;
+	top: 30px;
+}
+
+#loginButton {
+	-webkit-margin-before: 1em;
+}
+
+#mapWrapper {
+	position: relative;
+	height: 750px;
+	padding: 0;
+}
+
+#map {
+	position: relative;
+	top: 50px;
+	height: 75%;
+	width: 75%;
+	margin: 0 auto;
+	border-style: solid;
+	border-color: #107192;
+	border-width: medium;
+}
+
+#foto {
+	height: 160px;
+}
+
+#table {
+	positon: relative;
+	top: 25px;
+}
+
+#loginTable {
+	positon: relative;
+	top: 25px;
+	height: 250px;
+}
+
+#leftTable {
+	position: relative;
+	float: left;
+	width: 50%;
+}
+
+#rightMapWrapper {
+	position: relative;
+	float: left;
+	height: 750px;
+	padding: 0;
+	width: 50%;
+}
+
+#mapTable {
+	min-height: 750px;
+}
+
+#imageTable {
+	
+}
+
+.pac-card {
+	margin: 10px 10px 0 0;
+	border-radius: 2px 0 0 2px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	outline: none;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+	background-color: #fff;
+	font-family: Roboto;
+}
+
+#pac-container {
+	padding-bottom: 12px;
+	margin-right: 12px;
+}
+
+.pac-controls {
+	display: inline-block;
+	padding: 5px 11px;
+}
+
+.pac-controls label {
+	font-family: Roboto;
+	font-size: 13px;
+	font-weight: 300;
+}
+
+#pac-input {
+	background-color: #fff;
+	font-family: Roboto;
+	font-size: 15px;
+	font-weight: 300;
+	margin-left: 12px;
+	padding: 0 11px 0 13px;
+	text-overflow: ellipsis;
+	width: 400px;
+}
+
+#pac-input:focus {
+	border-color: #4d90fe;
+}
+
+#userLog {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	background: none;
+	height: 50px;
+	width: 150px;
+}
+
+#userLog input {
+	background: none;
+	border: solid;
+	border-color: #fe9819;
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+	background-color: #fe981973;
+}
+
+#icon {
+	position: absolute;
+	float: left;
+	height: 40px;
+	top: 5px;
+	right: 1px;
+	width: 40px;
+}
+
+#profileButton {
+	position: absolute;
+	float: left;
+	top: 15px;
+	left: 9px;
+	margin: 0;
+	padding: 0;
+	height: 20px;
+	width: 100px;
+}
+
+#profileForm {
+	position: absolute;
+	float: left;
+	top: -60px;
+	right: 40px;
+	width: 100px;
+	text-align: right;
+}
+
+#welcome {
+	text-align: center;
+	font-size: 29px;
+	position: relative;
+	top: 5px;
+}
+
+.ui-menubutton {
+	height: 20px;
+}
+
+.ui-menubutton .ui-state-default .ui-icon {
+	background: none;
+}
+
+.ui-button-icon-only {
+	height: 30px;
+	width: 30px;
+	background-image: url(/VibreWeb/resources/images/settings.png);
+	background-repeat: no-repeat;
+	background-size: 30px, 30px;
+	background-color: transparent;
+	border: none;
+}
+
+.ui-paginator.ui-paginator-top {
+	
+}
+
+.ui-datatable .ui-paginator, .ui-datatable .ui-paginator {
+	padding: 2px;
+}
+
+.ui-paginator {
+	text-align: center;
+}
+
+.ui-corner-top {
+	-moz-border-radius-topleft: 3px;
+	-webkit-border-top-left-radius: 3px;
+	-moz-border-radius-topright: 3px;
+	-webkit-border-top-right-radius: 3px;
+}
+
+.ui-widget-header {
+	color: #333;
+	font-weight: bold;
+	background: #f49723;
+	text-shadow: none;
+}
+
+//
+.ui-paginator .ui-paginator-current, .ui-paginator .ui-paginator-rpp-options
+	{
+	margin-left: 1em;
+	margin-right: 1em;
+	background-image: none;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	border: 1px solid #c8c5c3;
+	font-weight: bold;
+	color: #4f4f4f;
+	text-shadow: none;
+	background: #b2b1ad;
+}
+
+.ui-widget .ui-widget {
+	font-size: 1em;
+}
+
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button
+	{
+	font-family: Arial, sans-serif;
+	font-size: 1em;
+}
+
+.ui-corner-left {
+	-moz-border-radius-topleft: 3px;
+	-webkit-border-top-left-radius: 3px;
+	border-top-left-radius: 3px;
+	-moz-border-radius-bottomleft: 3px;
+	-webkit-border-bottom-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+}
+
+.ui-state-default {
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.ui-widget {
+	/* font-family: Arial,sans-serif; */
+	font-size: 1.1em;
+}
+
+.ui-icon {
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+	border-radius: 0px;
+}
+
+.ui-chkbox-icon.ui-icon {
+	overflow: visible;
+	background-color: #e0e0e0;
+}
+
+//
+.ui-state-highlight {
+	border: 1px solid #666;
+	background: #efb772;
+	color: #fff;
+	text-shadow: 1px 1px 1px #333;
+}
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight {
+	border: 1px solid #666;
+	background: #efb772;
+	color: #fff;
+	text-shadow: 1px 1px 1px #333;
+}
+
+.ui-state-hover, .ui-widget-content .ui-state-hover {
+	background: #398eab;
+}
+
+}
+.ui-widget-content .ui-datatable-even .ui-datatable-selectable .ui-state-highlight
+	{
+	border: 1px solid #666;
+	background: #efb772;
+	color: #fff;
+	text-shadow: 1px 1px 1px #333;
+}

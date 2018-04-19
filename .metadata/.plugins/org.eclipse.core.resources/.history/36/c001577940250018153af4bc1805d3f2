@@ -1,0 +1,187 @@
+package vibration.JPA;
+
+import java.io.Serializable;
+import javax.persistence.*;
+import java.util.List;
+
+/**
+ * The persistent class for the project database table.
+ * 
+ */
+@Entity
+@NamedQuery(name = "Project.findAll", query = "SELECT p FROM Project p")
+public class Project implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	private int id;
+
+	private String projectToken;
+
+	private String projectType;
+
+	private String titel;
+
+	// bi-directional many-to-one association to Experimenten
+	@OneToMany(mappedBy = "project")
+	private List<Experimenten> experimentens;
+
+	// bi-directional many-to-one association to Foto
+	@OneToMany(mappedBy = "project")
+	private List<Foto> fotos;
+
+	// bi-directional many-to-one association to Locaty
+	@OneToOne(mappedBy = "project")
+	private Locaty locaties;
+
+	// bi-directional many-to-one association to Personen
+	@ManyToOne
+	private Personen personen;
+
+	// private boolean publiek;
+	/*
+	 * public boolean isPublic() { return publiek; }
+	 * 
+	 * public void setPublic(boolean publiek) { this.publiek = publiek; }
+	 */
+	public Project() {
+	}
+
+	public Project(String projID) {
+		titel = projID;
+		// publiek=false;.
+
+
+	}
+
+	public int getId() {
+		return this.id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getProjectToken() {
+		return this.projectToken;
+	}
+
+	public void setProjectToken(String projectToken) {
+		this.projectToken = projectToken;
+	}
+
+	public String getProjectType() {
+		return this.projectType;
+	}
+
+	public void setProjectType(String projectType) {
+		this.projectType = projectType;
+	}
+
+	public String getTitel() {
+		return this.titel;
+	}
+
+	public void setTitel(String titel) {
+		this.titel = titel;
+	}
+
+	public List<Experimenten> getExperimentens() {
+		return this.experimentens;
+	}
+
+	public void setExperimentens(List<Experimenten> experimentens) {
+		this.experimentens = experimentens;
+	}
+
+	public Experimenten addExperimenten(Experimenten experimenten) {
+		getExperimentens().add(experimenten);
+		experimenten.setProject(this);
+
+		return experimenten;
+	}
+
+	public Experimenten removeExperimenten(Experimenten experimenten) {
+		getExperimentens().remove(experimenten);
+		experimenten.setProject(null);
+
+		return experimenten;
+	}
+
+	public List<Foto> getFotos() {
+		return this.fotos;
+	}
+
+	public void setFotos(List<Foto> fotos) {
+		this.fotos = fotos;
+	}
+
+	public Foto addFoto(Foto foto) {
+		getFotos().add(foto);
+		foto.setProject(this);
+
+		return foto;
+	}
+
+	public Foto removeFoto(Foto foto) {
+		getFotos().remove(foto);
+		foto.setProject(null);
+
+		return foto;
+	}
+
+	public Locaty getLocaties() {
+		return this.locaties;
+	}
+
+	public void setLocaties(Locaty locaties) {
+		this.locaties = locaties;
+	}
+
+	/*
+	 * public Locaty addLocaty(Locaty locaty) { getLocaties().add(locaty);
+	 * locaty.setProject(this);
+	 * 
+	 * return locaty; }
+	 * 
+	 * public Locaty removeLocaty(Locaty locaty) { getLocaties().remove(locaty);
+	 * locaty.setProject(null);
+	 * 
+	 * return locaty; }
+	 */
+	public Personen getPersonen() {
+		return this.personen;
+	}
+
+	public void setPersonen(Personen personen) {
+		this.personen = personen;
+	}
+
+	public String generateToken() {
+		StringBuilder s = new StringBuilder();
+		
+		for (int j = 0; j < 3; j++) {
+			int i = (int) (Math.random() * 36);
+			if (i < 10) {
+				s.append(String.valueOf(i));
+
+			} else {
+				s.append((char) (i - 10 + 65));
+			}
+		}
+		s.append("-");
+		for (int j = 0; j < 3; j++) {
+			int i = (int) (Math.random() * 36);
+			if (i < 10) {
+				s.append(String.valueOf(i));
+
+			} else {
+				s.append((char) (i - 10 + 65));
+			}
+		}
+
+		return s.toString();
+	}
+
+
+}

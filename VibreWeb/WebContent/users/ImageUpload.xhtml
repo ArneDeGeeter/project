@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><ui:insert name="title">Upload page</ui:insert></title>
+	<f:metadata>
+		<f:viewParam name="project" value="#{imageController.project.id}"
+			required="false" />
+		<f:viewParam name="experiment"
+			value="#{imageController.experiment.id}" required="false" />
+	</f:metadata>
+	<link rel="stylesheet"
+		href="/VibreWeb/resources/css/vibrationStyle.css" />
+</h:head>
+<h:body>
+	<div id="loginBar"></div>
+	<div id="transition" />
+
+	<div id="wrapperHeader">
+		<p:commandLink action="#{navigationController.homedirect()}">
+			<h:graphicImage id="logo" value="/resources/images/vibrationLogo.png" />
+		</p:commandLink>
+		<div id="userLog">
+			<h:form id="profileForm">
+				<h:commandButton id="profileButton"
+					value="#{userController.currentUser()}"
+					action="#{userController.userPage()}" />
+			</h:form>
+			<h:graphicImage id="icon" value="/resources/images/loginIcon.png" />
+		</div>
+	</div>
+
+	<div id="keuzeTabs">
+		<h:form>
+			<h:commandButton class="tab" value="profiel"
+				action="#{navigationController.profiel()}" style="width:34%" />
+			<h:commandButton class="tab" value="Verander profiel"
+				action="#{navigationController.veranderProfiel()}" style="width:33%" />
+
+			<h:commandButton class="tab" value="create project"
+				action="#{navigationController.createProjectPage()}"
+				style="width:33%" />
+		</h:form>
+	</div>
+	<div id="mainBody">
+		Selecteer een foto en titel voor aan het project toe te voegen
+
+		<div id="uploadForm">
+			<h:form id="form" enctype="multipart/form-data">
+			
+				<h:inputFile id="file" value="#{imageController.file}" />
+				<br />
+				<h:inputText id="titelImage" value="#{imageController.naam}" />
+				<p:watermark for="titelImage" value="Naam voor de afbeelding" />
+				<h:commandButton value="Upload" action="#{imageController.upload()}" />
+				<br></br>
+				<h:outputText value="#{imageController.foutMessage}"
+					style="color: red" />
+			</h:form>
+		</div>
+	</div>
+</h:body>
+</html>

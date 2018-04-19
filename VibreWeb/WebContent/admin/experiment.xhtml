@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<link rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+	<title><ui:insert name="title">Admin page</ui:insert></title>
+
+	<f:metadata>
+		<f:viewParam name="experiment"
+			value="#{metingController.experiment.id}" required="true"/>
+			<f:viewParam name="experiment"
+			value="#{imageController.experiment.id}" required="true"/>
+	</f:metadata>
+
+</h:head>
+<h:inputHidden value="#{imageController.getExpData()}" />
+ <h:inputHidden value="#{metingController.CreateLineModel()}" />	
+
+
+
+
+<h:body>
+
+	<a class='btn btn-info btn-xs'
+						href="../ImageUploadExp.xhtml?experiment=#{imageController.experiment.id}"><span
+						class="glyphicon glyphicon-edit"></span>Voeg foto toe</a>					
+						
+	<h:form>		
+	
+	
+	<h:commandButton
+			style="margin-right:350px;float:right;hight:100px;width:200px"
+			value="Verwijder experiment" action="#{imageController.verwijderExperiment()}"
+			class="btn btn-primary pull-right" />
+	
+	
+				
+	<h:commandButton
+			style="margin-right:350px;float:right;hight:100px;width:200px"
+			value="Terug naar project" action="#{imageController.naarProjectPagina()}"
+			class="btn btn-primary pull-right" />
+	</h:form>
+	
+	  <p>Opmerking:</p>
+	  
+	  <h:outputText value="#{metingController.toonOpmerking()}" styleClass="preformatted"/>
+	  <br></br>
+	  
+	
+	<p:dataTable id="docId" var="row" value="#{imageController.fotoData}"
+		editable="false" widgetVar="documentTable">
+		<p:column headerText="Image">
+			<p:graphicImage value="#{imageController.foto}">
+				<f:param name="id" value="#{row.id}" />
+			</p:graphicImage>
+			<h:outputLabel value="#{row.foto_naam}" />
+		</p:column>
+		</p:dataTable>
+		
+		
+	
+	<p:chart type="line" model="#{metingController.metingChart}"
+		style="height:300px;" />
+		
+		
+		
+</h:body>
+</html>

@@ -1,0 +1,89 @@
+package vibration.JPA;
+
+import java.io.Serializable;
+import javax.persistence.*;
+
+
+/**
+ * The persistent class for the meting database table.
+ * 
+ */
+@Entity
+@NamedQuery(name="Meting.findAll", query="SELECT m FROM Meting m")
+public class Meting implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	private int id;
+
+	private int tijd;
+
+	@Lob
+	private byte[] x;
+
+	@Lob
+	private byte[] y;
+
+	@Lob
+	private byte[] z;
+
+	//bi-directional many-to-one association to Experimenten
+	@ManyToOne
+	private Experimenten experimenten;
+
+	public Meting() {
+	}
+	
+	public Meting(Meting meting) {
+		// TODO Auto-generated constructor stub
+	}
+
+	public int getId() {
+		return this.id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public byte[] getTijd() {
+		return this.tijd;
+	}
+
+	public void setTijd(byte[] tijd) {
+		this.tijd = tijd;
+	}
+
+	public byte[] getX() {
+		return this.x;
+	}
+
+	public void setX(byte[] x) {
+		this.x = x;
+	}
+
+	public byte[] getY() {
+		return this.y;
+	}
+
+	public void setY(byte[] y) {
+		this.y = y;
+	}
+
+	public byte[] getZ() {
+		return this.z;
+	}
+
+	public void setZ(byte[] z) {
+		this.z = z;
+	}
+
+	public Experimenten getExperimenten() {
+		return this.experimenten;
+	}
+
+	public void setExperimenten(Experimenten experimenten) {
+		this.experimenten = experimenten;
+	}
+
+}

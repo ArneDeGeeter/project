@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	version="3.1">
+	<welcome-file-list>
+		<welcome-file>index.xhtml</welcome-file>
+	</welcome-file-list>
+	<session-config>
+		<session-timeout>30</session-timeout>
+		<cookie-config>
+			<http-only>true</http-only> <!-- Prevent client side scripting from accessing/manipulating session cookie. -->
+		</cookie-config>
+		<tracking-mode>COOKIE</tracking-mode> <!-- This disables URL rewriting. -->
+	</session-config>
+	<servlet>
+		<servlet-name>FacesServlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+		<security-role-ref>
+			<role-name>Admin</role-name>
+			<role-link>Admin</role-link>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>Spotter</role-name>
+			<role-link>Spotter</role-link>
+		</security-role-ref>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FacesServlet</servlet-name>
+		<url-pattern>*.xhtml</url-pattern>
+	</servlet-mapping>
+	
+	<security-role>
+		<role-name>Admin</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>Spotter</role-name>
+	</security-role>
+	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Secure Admin Pages</web-resource-name>
+			<description></description>
+			<url-pattern>/admin/*</url-pattern>
+			<url-pattern>/users/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>Admin</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Secure Spotter Pages</web-resource-name>
+			<description></description>
+			<url-pattern>/spotter/*</url-pattern>
+			<url-pattern>/users/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>Spotter</role-name>
+		</auth-constraint>
+	</security-constraint>
+	
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<realm-name>vibration-realm</realm-name>
+		<form-login-config>
+			<form-login-page>/login.xhtml</form-login-page>
+			<form-error-page>/index.xhtml</form-error-page>
+		</form-login-config>
+	</login-config>
+</web-app>
