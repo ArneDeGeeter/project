@@ -11,13 +11,11 @@ public interface LogincaseLocal {
 	
 	public String loginUser(String email);
 
-	String login(String email, String wachtwoord);
 
 	String returnName(Personen persoon);
 
 	void registerUser(String voornaam, String naam, String wachtwoord, String email, String school, String bio);
 
-	String getToken(Personen p);
 
 	void loginGlassfish(String email, String wachtwoord);
 

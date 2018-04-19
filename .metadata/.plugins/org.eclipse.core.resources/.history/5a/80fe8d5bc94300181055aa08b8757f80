@@ -1,0 +1,206 @@
+package vibration.EJB;
+
+import java.security.SecureRandom;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.faces.view.ViewScoped;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import vibration.JPA.Experimenten;
+import vibration.JPA.Locaty;
+import vibration.JPA.Personen;
+import vibration.JPA.Project;
+
+/**
+ * Session Bean implementation class ProjectManagementEJB
+ */
+@Stateless
+public class ProjectManagementEJB implements ProjectManagementEJBLocal {
+
+	@PersistenceContext(unitName = "VibreJPA")
+	private EntityManager em;
+
+	@EJB
+	private UserManagementEJBLocal userEJB;
+
+	@Resource
+	private SessionContext ctx;
+
+	public ProjectManagementEJB() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public Experimenten findExperiment(int id) {
+
+		return em.find(Experimenten.class, id);
+	}
+
+	public List<Experimenten> findExperiments(int id) {
+		Query q = em.createQuery("SELECT e FROM Experimenten e WHERE e.project.id = :id");
+		q.setParameter("id", id);
+		List<Experimenten> experimenten = q.getResultList();
+		return experimenten;
+	}
+
+	public boolean checkToken(String s) {
+		Query q = em.createQuery("SELECT p FROM Project p WHERE p.projectToken = :id");
+		q.setParameter("id", s);
+		if (q.getResultList().size() == 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public String createToken() {
+		boolean bezig = true;
+		String token = "Leeg";
+		String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		SecureRandom rnd = new SecureRandom();
+		StringBuilder sb;
+		while (bezig) {
+			sb = new StringBuilder(6);
+			for (int i = 0; i < 3; i++) {
+				sb.append(AB.charAt(rnd.nextInt(AB.length())));
+			}
+			sb.append("-");
+			for (int i = 0; i < 3; i++) {
+				sb.append(AB.charAt(rnd.nextInt(AB.length())));
+			}
+			token = sb.toString();
+			if (!checkToken(token)) {
+				bezig = false;
+			}
+		}
+		return token;
+	}
+
+	@Override
+	public String geefToken(int id) {
+		Project p = em.find(Project.class, id);
+		return p.getProjectToken();
+	}
+
+	@Override
+	public String createProjectPlusLocation(String titel, String teacher, String publiek, String beschrijving,
+			String naam, String adres, double lat, double lng) {
+
+		String token = "";
+		String login = ctx.getCallerPrincipal().getName();
+		Personen persoon = userEJB.findPerson(login);
+		Date aanmaakDatum = new Date();
+		aanmaakDatum = new Date((aanmaakDatum.getTime() / 1000) * 1000);
+
+		Project project = new Project();
+		project.setPersonen(persoon);
+		project.setPublic_(publiek.equals("publiek"));
+		project.setTeacher(teacher.equals("STEM"));
+		project.setTitel(titel);
+		project.setProjectToken(token);
+		project.setBeschrijving(beschrijving);
+		project.setAanmaakDatum(aanmaakDatum);
+		em.joinTransaction();
+		em.persist(project);
+
+		Query q = em.createQuery("SELECT p FROM Project p");
+
+		List<Project> projecten = q.getResultList();
+		for (int i = 0; i < projecten.size(); i++) {
+			if ((projecten.get(i).getAanmaakDatum().toString().equals(aanmaakDatum.toString()))
+					&& (projecten.get(i).getPersonen().getIdpersonen() == persoon.getIdpersonen())) {
+				Locaty locatie = new Locaty();
+				locatie.setAdres(adres);
+				locatie.setLat((float) lat);
+				locatie.setLng((float) lng);
+				locatie.setNaam(naam);
+				em.persist(locatie);
+
+				locatie.setProject(projecten.get(i));
+				projecten.get(i).setLocaty(locatie);
+
+				em.merge(projecten.get(i));
+				em.merge(locatie);
+
+			}
+		}
+		return token;
+
+	}
+
+	public String createProject(String titel, boolean type, int persoonId) {
+		String token = createToken();
+		//TODO CHECK IF PERSON IS NEEDED
+		Personen persoon = em.find(Personen.class, persoonId);
+		Project project = new Project();
+		// project.setPersonen(persoon);
+		project.setTeacher(type);
+		project.setTitel(titel);
+		project.setProjectToken(token);
+		project.setAanmaakDatum(new Date());
+		em.joinTransaction();
+		em.persist(project);
+		return token;
+	}
+
+	@Override
+	public Project vindProjectByToken(String token) {
+		Query q = em.createQuery("SELECT p FROM Project p WHERE p.projectToken = :Token");
+		q.setParameter("Token", token);
+		List<Project> project = q.getResultList();
+		if (project.size() == 1) {
+			System.out.println("check");
+			return project.get(0);
+		}
+		System.out.println("fail");
+		return null;
+	}
+
+	@Override
+	public Project vindProject(int i) {
+		Query q = em.createQuery("SELECT p FROM Project p WHERE p.id = :id");
+		q.setParameter("id", i);
+		List<Project> project = q.getResultList();
+		if (project.size() == 1) {
+			System.out.println("check");
+			return project.get(0);
+		}
+		System.out.println("fail");
+		return null;
+
+	}
+	/**
+	 * Verwijderd het project waarvan het Id is meegegeven.
+	 * 
+	 * @param i Id van het project
+	 */
+	public void verwijderProject(int i) {
+		Project p = vindProject(i);
+		List<Experimenten> exp = findExperiments(p.getId());
+
+		for (Experimenten e : exp) {
+			em.merge(e);
+			em.remove(e);
+		}
+		em.merge(p);
+		em.remove(p);
+
+	}
+
+	@Override
+	public List<Project> findAllProjects() {
+		Query q = em.createQuery("SELECT p FROM Project p");
+		List<Project> project = q.getResultList();
+		return project;
+	}
+}

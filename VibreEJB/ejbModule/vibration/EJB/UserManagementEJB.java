@@ -39,7 +39,7 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 	private SessionContext ctx;
 
 	private boolean experiment = false;
-	private boolean project = false;
+	private boolean beanProject = false;
 
 	@EJB
 	private MetingEJBLocal metingEJB;
@@ -57,10 +57,8 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 		q.setParameter("id", i);
 		List<Project> project = q.getResultList();
 		if (project.size() == 1) {
-			System.out.println("findproject check");
 			return project.get(0);
 		}
-		System.out.println("findproject fail");
 		return null;
 
 	}
@@ -87,7 +85,6 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 		} else {
 			project.setProjectToken(null);
 		}
-		System.out.println("Teacher staat nu op " + project.getTeacher());
 		em.merge(project);
 	}
 
@@ -118,12 +115,9 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 
 	@Override
 	public void verwijderUser(int id) {
-		System.out.println(id + " zijn projecten moeten opkrassen");
 		Personen p = em.find(Personen.class, id);
 		List<Project> projecten = findProjects(id);
-		System.out.println("Aantal projecten van deze sloeber: " + projecten.size());
 		for (Project proj : projecten) {
-			System.out.println(proj.getId() + " Wordt verwijderd nu");
 			projectEJB.verwijderProject(proj.getId());
 		}
 		em.merge(p);
@@ -225,14 +219,14 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 			q = em.createQuery("SELECT f FROM Foto f WHERE f.experimenten.id = :id ");
 			q.setParameter("id", id);
 
-		} else if (project) {
+		} else if (beanProject) {
 			q = em.createQuery("SELECT f FROM Foto f WHERE f.project.id = :id ");
 			q.setParameter("id", id);
 		}
 		if (q != null) {
 			return q.getResultList();
 		} else {
-			return new ArrayList<Foto>();
+			return new ArrayList<>();
 		}
 	}
 
@@ -256,7 +250,6 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 		Query q = em.createQuery("SELECT e FROM Experimenten e WHERE e.project.id= :project");
 		q.setParameter("project", p.getId());
 		List<Experimenten> experimenten = q.getResultList();
-		System.out.println(experimenten.size());
 		return experimenten;
 	}
 
@@ -300,7 +293,6 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 	public List<Project> zoekProjecten(String projectZoekNaam) {
 		Query q = em.createQuery(
 				"SELECT f FROM Project f WHERE f.titel LIKE '%" + projectZoekNaam + "%' AND f.public_ = TRUE");
-		System.out.println("Returning results...");
 		return q.getResultList();
 
 	}
@@ -339,11 +331,11 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 	}
 
 	public boolean isProject() {
-		return project;
+		return beanProject;
 	}
 
 	public void setProject(boolean project) {
-		this.project = project;
+		this.beanProject = project;
 	}
 
 	@Override

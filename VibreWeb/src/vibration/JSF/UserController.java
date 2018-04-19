@@ -59,7 +59,7 @@ public class UserController implements Serializable {
 	private String gebruikersnaam;
 	private String opleiding;
 	private Personen person;
-	
+	private static final String nietBeschikbaar="Niet beschikbaar";
 
 	// inloggen
 	private String username;
@@ -127,28 +127,28 @@ public class UserController implements Serializable {
 	public String toonVoornaam() {
 		int id = userEJB.currentUserId();
 		person = userEJB.geefPersoon(id);
-		if(person.getVoornaam()==null){return "Niet beschikbaar";}
+		if(person.getVoornaam()==null){return nietBeschikbaar;}
 		else{return person.getVoornaam();}
 	}
 	
 	public String toonNaam() {
 		int id = userEJB.currentUserId();
 		person = userEJB.geefPersoon(id);
-		if(person.getNaam()==null){return "Niet beschikbaar";}
+		if(person.getNaam()==null){return nietBeschikbaar;}
 		else{return person.getNaam();}
 	}
 	
 	public String toonSchool() {
 		int id = userEJB.currentUserId();
 		person = userEJB.geefPersoon(id);
-		if(person.getSchool()==null){return "Niet beschikbaar";}
+		if(person.getSchool()==null){return nietBeschikbaar;}
 		else{return person.getSchool();}
 	}
 	
 	public String toonOpleiding() {
 		int id = userEJB.currentUserId();
 		person = userEJB.geefPersoon(id);
-		if(person.getOpleiding()==null){return "Niet beschikbaar";}
+		if(person.getOpleiding()==null){return nietBeschikbaar;}
 		else{return person.getOpleiding();}
 	}
 
@@ -186,13 +186,6 @@ public class UserController implements Serializable {
 		for (Personen pers : users) {
 			userEJB.verwijderUser(pers.getIdpersonen());
 		}
-	}
-
-	// Joran zijn contributie
-	/**
-	 * Doet niets.
-	 */
-	public void doeNiets() {
 	}
 
 	// getters en setters

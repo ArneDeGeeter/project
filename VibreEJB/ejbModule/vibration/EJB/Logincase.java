@@ -74,41 +74,13 @@ public class Logincase implements LogincaseLocal {
 		else
 			return null;
 	}
-	/*
-	 * @Override public String loginUser(String email) {
-	 * 
-	 * System.out.println("ik doe beu"); Query q =
-	 * em.createQuery("SELECT p FROM Personen p WHERE p.email = :email");
-	 * q.setParameter("email", email); List<Personen> personen =
-	 * q.getResultList(); if (personen.size() == 1) { if
-	 * (personen.get(0).getRol().equals("Teacher")) { return
-	 * "/teacher/userView.faces?faces-redirect=true"; } else if
-	 * (personen.get(0).getRol().equals("Spotter")) { return
-	 * "/spotter/userView.faces?faces-redirect=true"; } else if
-	 * (personen.get(0).getRol().equals("Admin")) { return
-	 * "/admin/userView.faces?faces-redirect=true"; } } return ""; }
-	 */
 
-	@Override
-	public String login(String email, String wachtwoord) {
-		System.out.println("login");
-		Query q = em.createQuery(selectPersonEmail);
-		q.setParameter(email, email);
-		List<Personen> personen = q.getResultList();
-		if (personen.size() == 1) {
-			if (personen.get(0).getWachtwoord().equals(wachtwoord)) {
-				return getToken(personen.get(0));
-			}
-		}
-		return "fail";
-	}
 
 	@Override
 	public void loginGlassfish(String email, String wachtwoord) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ExternalContext externalContext = context.getExternalContext();
 		HttpServletRequest request = (HttpServletRequest) externalContext.getRequest();
-		System.out.println("loginGlassfish");
 		try {
 			request.login(email, wachtwoord);
 			Personen persoon = userEJB.findPerson(email);
@@ -154,7 +126,6 @@ public class Logincase implements LogincaseLocal {
 	public void registerUser(String voornaam, String naam, String wachtwoord, String email, String school, String bio) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ExternalContext externalContext = context.getExternalContext();
-		HttpServletRequest request = (HttpServletRequest) externalContext.getRequest();
 
 		String hashedPass = createHash(wachtwoord);
 		if (hashedPass == null) {
@@ -195,67 +166,13 @@ public class Logincase implements LogincaseLocal {
 		}
 		return null;
 	}
-	/*
-	 * private String werkendeLoginUser(String naam, String wachtwoord) { Query
-	 * q = em.createQuery("SELECT p FROM Personen p WHERE p.naam = :naam");
-	 * q.setParameter("naam", naam); List<Personen> personen =
-	 * q.getResultList(); if (personen.size() == 1) { if
-	 * (personen.get(0).getWachtwoord().equals(wachtwoord)) {
-	 * 
-	 * return getToken(personen.get(0)); } } return "fail"; }
-	 */
 
-	@Override
-	public String getToken(Personen p) {
-		/*
-		 * Calendar cal = Calendar.getInstance(); cal.set(Calendar.YEAR, 2018);
-		 * cal.set(Calendar.MONTH, Calendar.FEBRUARY);
-		 * cal.set(Calendar.DAY_OF_MONTH, 1); Calendar cal2 =
-		 * Calendar.getInstance(); cal2.set(Calendar.YEAR, 2018);
-		 * cal2.set(Calendar.MONTH, Calendar.MARCH);
-		 * cal2.set(Calendar.DAY_OF_MONTH, 2);
-		 * System.out.println(cal.getTimeInMillis());
-		 * System.out.println(cal.getTime().getTime());
-		 * System.out.println(cal.getTime());
-		 */
-		Calendar cal = Calendar.getInstance();
-		System.out.println(cal.toString());
-		cal.add(Calendar.DAY_OF_WEEK, 1);
-		System.out.println(cal.toString());
-		String compactJws = Jwts.builder().claim("id", p.getIdpersonen()).setSubject(p.getNaam())
-				.setExpiration(cal.getTime())
-				/*
-				 * .setIssuedAt(cal.getTime()) .setExpiration(cal2.getTime())
-				 */
-				.signWith(SignatureAlgorithm.HS512, SECRET).compact();
-		checkKey(compactJws);
-		System.out.println(compactJws);
-		return compactJws;
-
-	}
-
-	private boolean checkKey(String t) {
-		try {
-			Jwts.parser().setSigningKey(SECRET).parseClaimsJws(t);
-
-			Jws<Claims> claims = Jwts.parser().requireSubject("admin").setSigningKey(SECRET).parseClaimsJws(t);
-			return true;
-		} catch (SignatureException e) {
-			System.out.println(e);
-			System.out.println("SignatureException");
-			return false;
-		} catch (MissingClaimException e) {
-			System.out.println("MissingClaimException");
-			return false;
-		} catch (IncorrectClaimException e) {
-			System.out.println("IncorrectClaimException");
-			return false;
-		}
-	}
 
 	@Override
 	public String loginUser(String email) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 }

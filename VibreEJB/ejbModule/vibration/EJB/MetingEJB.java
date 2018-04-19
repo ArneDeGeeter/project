@@ -50,7 +50,6 @@ public class MetingEJB implements MetingEJBLocal {
 		List<Experimenten> exp = q.getResultList();
 		
 		if (exp.size() == 1) {
-			System.out.println(exp.get(0).getMetings().size());
 			return exp.get(0);
 		} else
 			return null;
@@ -186,8 +185,6 @@ public class MetingEJB implements MetingEJBLocal {
 						+ "data_filtered"+u+" = filtfilt(b,a,data_resampled);\nA2_data = fft(data_filtered"+u+"); A2 = abs(A2_data/L);\n"
 						+ "A_data"+u+" = A2(1:L/2+1); A_data"+u+"(2:end-1) = 2*A_data"+u+"(2:end-1);\n");
 				
-				//System.out.println(u);
-				//out.flush();	
 				
 			}
 			//Eerst lengtes van de arrays laten uitprinten zodat we weten hoeveel getallen we moeten verwachten
@@ -207,12 +204,7 @@ public class MetingEJB implements MetingEJBLocal {
 
 			out.flush();
 
-			System.out.println("Nummer 1" + inp.readLine());
-			System.out.println("Nummer 2" + inp.readLine());
-			System.out.println("Nummer 3" + inp.readLine());
-			System.out.println("Nummer 4" + inp.readLine());
 			ba = inp.readLine();
-			System.out.println("Waardekoek: " + ba);
 			
 			
 			
@@ -300,7 +292,6 @@ public class MetingEJB implements MetingEJBLocal {
 				xMeetWaarde.add(Float.parseFloat(getallen[e]));
 			}
 
-			System.out.println("We geven terug: yLengte= "+yWaarde.size()+" en Xlente= "+xWaarde.size());
 			
 			lijst.add(f);
 			lijst.add(zWaarde);
@@ -312,7 +303,6 @@ public class MetingEJB implements MetingEJBLocal {
 			lijst.add(yMeetWaarde);
 			lijst.add(xMeetWaarde);
 			
-			System.out.println(tWaarde.size());System.out.println(zMeetWaarde.size());
 			
 			
 			return lijst;

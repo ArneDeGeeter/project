@@ -139,9 +139,6 @@ public class MetingController implements Serializable {
 			if (experiment.getMetings().size() != 0) {
 				if ((meting != null) && (meting.getX() != null) && (meting.getY() != null) && (meting.getZ() != null)) {
 
-					if (meting.getTijd() == null) {
-						System.out.println("a\na\na\na\na\na\na\na\na\naBatman");
-					}
 
 					byte[] bufferx = meting.getX();
 					byte[] buffery = meting.getY();

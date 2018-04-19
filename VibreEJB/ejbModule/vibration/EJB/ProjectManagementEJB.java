@@ -79,11 +79,9 @@ public class ProjectManagementEJB implements ProjectManagementEJBLocal {
 				sb.append(AB.charAt(rnd.nextInt(AB.length())));
 			}
 			token = sb.toString();
-			if (checkToken(token)) {
-			} else {
+			if (!checkToken(token)) {
 				bezig = false;
 			}
-			System.out.println(token + " is het token");
 		}
 		return token;
 	}
@@ -142,6 +140,7 @@ public class ProjectManagementEJB implements ProjectManagementEJBLocal {
 
 	public String createProject(String titel, boolean type, int persoonId) {
 		String token = createToken();
+		//TODO CHECK IF PERSON IS NEEDED
 		Personen persoon = em.find(Personen.class, persoonId);
 		Project project = new Project();
 		// project.setPersonen(persoon);
@@ -160,10 +159,8 @@ public class ProjectManagementEJB implements ProjectManagementEJBLocal {
 		q.setParameter("Token", token);
 		List<Project> project = q.getResultList();
 		if (project.size() == 1) {
-			System.out.println("check");
 			return project.get(0);
 		}
-		System.out.println("fail");
 		return null;
 	}
 
@@ -173,10 +170,8 @@ public class ProjectManagementEJB implements ProjectManagementEJBLocal {
 		q.setParameter("id", i);
 		List<Project> project = q.getResultList();
 		if (project.size() == 1) {
-			System.out.println("check");
 			return project.get(0);
 		}
-		System.out.println("fail");
 		return null;
 
 	}

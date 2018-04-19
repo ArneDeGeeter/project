@@ -261,7 +261,7 @@ public class ParameterRestService {
 	}
 
 	private ArrayList<Float> stringToArray(String stringList) {
-		ArrayList<Float> list = new ArrayList<Float>();
+		ArrayList<Float> list = new ArrayList<>();
 		
 		int spatie = 0;
 		for (int i = 0; i < stringList.length(); i++) {
