@@ -31,7 +31,7 @@ public class SearchController implements Serializable {
 	private String voornaam;
 	private String school;
 	private String opleiding;
-	
+	private String nietBeschikbaar="Niet beschikbaar";
 	
 	// zoekfuncties
 	private List<Project> projecten = new ArrayList<Project>();

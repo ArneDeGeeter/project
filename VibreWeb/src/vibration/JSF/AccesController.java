@@ -35,6 +35,8 @@ public class AccesController implements Serializable {
 	Experimenten experiment = new Experimenten();
 	Project project = new Project();
 
+	private String errorPagina="/VibreWeb/error/onbestaandePaginaError.xhtml";
+	
 	public void accesCheck() {
 		try {
 
@@ -51,31 +53,24 @@ public class AccesController implements Serializable {
 				} else if (projectId > 0) {
 					return;
 				} else
-					System.out.println("acces maar bestaat niet");
 
 				FacesContext.getCurrentInstance().getExternalContext()
-						.redirect("/VibreWeb/error/onbestaandePaginaError.xhtml");
+						.redirect(errorPagina);
 
 			}
 
 			// omleiding naar het publieke experiment/project
 			else if (id > 0) {
-				System.out.println("id bestaat" + id);
 				if (experimentId > 0 && experiment.getProject().getPublic_()) {
-					System.out.println("naar public experiment: " + experiment.getProject().getPublic_());
 					FacesContext.getCurrentInstance().getExternalContext()
 							.redirect("/VibreWeb/publicExperiment.xhtml?experiment=" + experimentId);
 				} else if (projectId > 0 && project.getPublic_()) {
-					System.out.println("naar public project: " + project.getPublic_());
 					FacesContext.getCurrentInstance().getExternalContext()
 							.redirect("/VibreWeb/publicProject.xhtml?project=" + projectId);
 				} else if (userEJB.geefPersoon(userId).isAdmin()) {
-					System.out.println("Admin ziet alles, ook dit project : " + project.getPublic_());
 					FacesContext.getCurrentInstance().getExternalContext()
 							.redirect("/VibreWeb/publicProject.xhtml?project=" + projectId);
 				} else {
-					System.out.println(userEJB.geefPersoon(userId).getRol());
-					System.out.println("niet public of geen van beide bestaat");
 					FacesContext.getCurrentInstance().getExternalContext().redirect("/VibreWeb/index.xhtml");
 				}
 			}
@@ -95,18 +90,13 @@ public class AccesController implements Serializable {
 				userId = (int) externalContext.getSessionMap().get("id");
 			}
 			if (id > 0) {
-				System.out.println("id bestaat" + id);
 				if (experimentId > 0 && experiment.getProject().getPublic_()) {
-					System.out.println("naar public experiment: " + experiment.getProject().getPublic_());
 					return;
 				} else if (projectId > 0 && project.getPublic_()) {
-					System.out.println("naar public project: " + project.getPublic_());
 					return;
 				} else if (userEJB.geefPersoon(userId).isAdmin()) {
-					System.out.println("naar public project: " + project.getPublic_());
 					return;
 				} else {
-					System.out.println("niet public of geen van beide bestaat");
 					FacesContext.getCurrentInstance().getExternalContext().redirect("/VibreWeb/index.xhtml");
 				}
 			}
@@ -124,29 +114,24 @@ public class AccesController implements Serializable {
 			experiment = userEJB.findExperiment(experimentId);
 
 			if (experiment != null) {
-				System.out.println("experiment datum" + experiment.getDate());
 				id = experiment.getProject().getPersonen().getIdpersonen();
 			} else {
-				System.out.println("experiment = 0");
 				FacesContext.getCurrentInstance().getExternalContext()
-						.redirect("/VibreWeb/error/onbestaandePaginaError.xhtml");
+						.redirect(errorPagina);
 			}
 		} // project in url
 		else if (projectId > 0 && experimentId == -1) {
 			project = userEJB.findProject(projectId);
 			if (project != null) {
-				System.out.println("project datum" + project.getAanmaakDatum());
 				id = project.getPersonen().getIdpersonen();
 			} else {
-				System.out.println("project = null");
 				FacesContext.getCurrentInstance().getExternalContext()
-						.redirect("/VibreWeb/error/onbestaandePaginaError.xhtml");
+						.redirect(errorPagina);
 			}
 		} // experiment en project of geen van beide in url
 		else {
-			System.out.println("geen van beide meegegeven");
 			FacesContext.getCurrentInstance().getExternalContext()
-					.redirect("/VibreWeb/error/onbestaandePaginaError.xhtml");
+					.redirect(errorPagina);
 		}
 		return;
 	}

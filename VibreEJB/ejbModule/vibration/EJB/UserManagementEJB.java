@@ -232,7 +232,7 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 		if (q != null) {
 			return q.getResultList();
 		} else {
-			return null;
+			return new ArrayList<Foto>();
 		}
 	}
 
