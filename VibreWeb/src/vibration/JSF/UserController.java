@@ -5,23 +5,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.application.FacesMessage;
-
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.PhaseId;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -31,10 +23,8 @@ import org.primefaces.model.StreamedContent;
 
 import vibration.EJB.LogincaseLocal;
 import vibration.EJB.UserManagementEJBLocal;
-import vibration.JPA.Experimenten;
 import vibration.JPA.Foto;
 import vibration.JPA.Personen;
-import vibration.JPA.Project;
 
 @Named("userController")
 @Stateless
@@ -84,14 +74,11 @@ public class UserController implements Serializable {
 		} else {
 
 			String id = context.getExternalContext().getRequestParameterMap().get("id");
-			System.out.println(id);
 			if (id.equals("0") || id.equals("-1")) {
-				File fi = new File("VibreWeb/resources/images/noImage.png");
 				InputStream stream1 = this.getClass().getResourceAsStream("VibreWeb/resources/images/noImage.png");
 				return new DefaultStreamedContent(stream1, "image/png");
 
 			} else {
-				System.out.println("gevonden id " + id);
 				Foto picture = userEJB.vindFoto(Integer.valueOf(id));
 				byte[] image = picture.getFoto();
 				return new DefaultStreamedContent(new ByteArrayInputStream(image));
@@ -174,7 +161,6 @@ public class UserController implements Serializable {
 	}
 
 	public void checkEmail(AjaxBehaviorEvent event) {
-		System.out.println("actief");
 		userEJB.checkEmail(username);
 	}
 

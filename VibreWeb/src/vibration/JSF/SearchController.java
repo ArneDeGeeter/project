@@ -71,7 +71,7 @@ public class SearchController implements Serializable {
 			setUserProjects(userEJB.findUserPublicProjects(gebruiker.getIdpersonen(), userId));
 		}
 	}
-
+	//Wordt deze ooit opgeroepen?
 	public void zoekProjectenAjax(AjaxBehaviorEvent event) {
 		setProjecten(userEJB.zoekProjecten(projectZoekNaam));
 	}

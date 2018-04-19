@@ -44,35 +44,30 @@ public class ProjectManagementEJB implements ProjectManagementEJBLocal {
 	public List<Experimenten> findExperiments(int id) {
 		Query q = em.createQuery("SELECT e FROM Experimenten e WHERE e.project.id = :id");
 		q.setParameter("id", id);
-		List<Experimenten> experimenten = q.getResultList();
-		return experimenten;
+		return q.getResultList();
 	}
 
 	public boolean checkToken(String s) {
 		Query q = em.createQuery("SELECT p FROM Project p WHERE p.projectToken = :id");
 		q.setParameter("id", s);
-		if (q.getResultList().size() == 0) {
-			return false;
-		} else {
-			return true;
-		}
+		return q.getResultList().size()!=0;
 	}
 
 	@Override
 	public String createToken() {
 		boolean bezig = true;
 		String token = "Leeg";
-		String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		String optionsforToken = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 		SecureRandom rnd = new SecureRandom();
 		StringBuilder sb;
 		while (bezig) {
 			sb = new StringBuilder(6);
 			for (int i = 0; i < 3; i++) {
-				sb.append(AB.charAt(rnd.nextInt(AB.length())));
+				sb.append(optionsforToken.charAt(rnd.nextInt(optionsforToken.length())));
 			}
 			sb.append("-");
 			for (int i = 0; i < 3; i++) {
-				sb.append(AB.charAt(rnd.nextInt(AB.length())));
+				sb.append(optionsforToken.charAt(rnd.nextInt(optionsforToken.length())));
 			}
 			token = sb.toString();
 			if (!checkToken(token)) {
@@ -192,7 +187,6 @@ public class ProjectManagementEJB implements ProjectManagementEJBLocal {
 	@Override
 	public List<Project> findAllProjects() {
 		Query q = em.createQuery("SELECT p FROM Project p");
-		List<Project> project = q.getResultList();
-		return project;
+		return q.getResultList();
 	}
 }

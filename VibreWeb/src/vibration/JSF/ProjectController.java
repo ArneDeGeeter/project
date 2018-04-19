@@ -226,7 +226,7 @@ public class ProjectController implements Serializable {
 		if (project != null) {
 			return projectEJB.findExperiments(project.getId());
 		} else
-			return null;
+			return new ArrayList<>();
 	}
 
 	public Project getProject() {

@@ -58,8 +58,8 @@ public class Foto implements Serializable {
 		return this.foto_naam;
 	}
 
-	public void setFoto_naam(String foto_naam) {
-		this.foto_naam = foto_naam;
+	public void setFoto_naam(String fotoNaam) {
+		this.foto_naam = fotoNaam;
 	}
 
 	public Project getProject() {

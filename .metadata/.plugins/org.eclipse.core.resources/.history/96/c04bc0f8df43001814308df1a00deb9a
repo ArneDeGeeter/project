@@ -1,0 +1,403 @@
+package vibration.EJB;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import vibration.JPA.Experimenten;
+import vibration.JPA.Foto;
+import vibration.JPA.Meting;
+import vibration.JPA.Personen;
+import vibration.JPA.Project;
+
+/**
+ * Session Bean implementation class UserManagementEJB
+ */
+@Stateless
+public class UserManagementEJB implements UserManagementEJBLocal {
+
+	/**
+	 * Default constructor.
+	 */
+	@PersistenceContext(unitName = "VibreJPA")
+	private EntityManager em;
+
+	@Resource
+	private SessionContext ctx;
+
+	private boolean experiment = false;
+	private boolean beanProject = false;
+
+	@EJB
+	private MetingEJBLocal metingEJB;
+
+	@EJB
+	private ProjectManagementEJBLocal projectEJB;
+	private String idpers = "idpers";
+
+	public UserManagementEJB() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public Project findProject(int i) {
+		Query q = em.createQuery("SELECT p FROM Project p WHERE p.id = :id");
+		q.setParameter("id", i);
+		List<Project> project = q.getResultList();
+		if (project.size() == 1) {
+			return project.get(0);
+		}
+		return null;
+
+	}
+
+	@Override
+	public Experimenten findExperimentByID(int id) {
+		Query q = em.createQuery("SELECT e FROM Experimenten e WHERE e.id= :exp");
+		q.setParameter("exp", id);
+		List<Experimenten> experimenten = q.getResultList();
+		if (experimenten.size() == 1) {
+			return experimenten.get(0);
+		}
+
+		else {
+			return null;
+		}
+	}
+
+	@Override
+	public void veranderStatus(Project project) {
+
+		if (project.getProjectToken() == null) {
+			project.setProjectToken(projectEJB.createToken());
+		} else {
+			project.setProjectToken(null);
+		}
+		em.merge(project);
+	}
+
+	@Override
+	public boolean checkStatus(int id) {
+		Project p = em.find(Project.class, id);
+		return p.getProjectToken() != null;
+	}
+
+	@Override
+	public Meting findMeting(int i, int id) {
+		Query q = em.createQuery("SELECT f FROM Meting f WHERE f.experimenten.id = :idex");
+		q.setParameter("idex", i);
+		return (Meting) q.getResultList().get(id);
+
+	}
+
+	public List<Project> findProjects(int id) {
+		Query q = em.createQuery("SELECT p FROM Project p WHERE p.personen.idpersonen = :id");
+		q.setParameter("id", id);
+		return q.getResultList();
+
+	}
+
+	@Override
+	public void verwijderUser(int id) {
+		Personen p = em.find(Personen.class, id);
+		List<Project> projecten = findProjects(id);
+		for (Project proj : projecten) {
+			projectEJB.verwijderProject(proj.getId());
+		}
+		em.merge(p);
+		em.remove(p);
+	}
+
+	@Override
+	public List<Project> findProjects(Personen persoon) {
+		Query q = em.createQuery("SELECT p FROM Project p");
+		return q.getResultList();
+	}
+
+	@Override
+	public List<Personen> findAllUsers() {
+		Query q = em.createQuery("SELECT p FROM Personen p");
+		return q.getResultList();
+	}
+
+	public List<Project> findUserProjects(Personen persoon) {
+		Personen p;
+		if (persoon == null) {
+			String login = ctx.getCallerPrincipal().getName();
+			p = findPerson(login);
+		} else {
+			p = persoon;
+		}
+		Query q = em.createQuery("SELECT p FROM Project p WHERE p.personen.idpersonen = :idpers");
+		q.setParameter(idpers, p.getIdpersonen());
+		return q.getResultList();
+	}
+
+	@Override
+	public String currentUser() {
+		String login = ctx.getCallerPrincipal().getName();
+		Personen p = findPerson(login);
+		if (p == null) {
+			return "Niet ingelogd";
+		}
+		return p.getGebruikersnaam();
+	}
+
+	@Override
+	public int currentUserId() {
+		String login = ctx.getCallerPrincipal().getName();
+		Personen p = findPerson(login);
+		if (p == null) {
+			return 0;
+		}
+		return p.getIdpersonen();
+	}
+
+	public String userPage() {
+		String login = ctx.getCallerPrincipal().getName();
+		Personen p = findPerson(login);
+		if (p == null) {
+			return "login.faces?faces-redirect=true";
+		} else if (p.getRol().equals("Spotter")) {
+			return "/spotter/profielpagina.faces?faces-redirect=true";
+		} else if (p.getRol().equals("Admin")) {
+			return "/admin/userView.faces?faces-redirect=true";
+		}
+		return "/error/profielError.faces?faces-redirect=true";
+	}
+
+	@Override
+	public List<Experimenten> findExperimenten(Project p) {
+		Query q = em.createQuery("SELECT e FROM Experimenten e WHERE e.project.id= :project");
+		q.setParameter("project", p.getId());
+		List<Experimenten> experimenten = q.getResultList();
+		return experimenten;
+	}
+
+	@Override
+	public Experimenten findExperiment(int id) {
+		Query q = em.createQuery("SELECT e FROM Experimenten e WHERE e.id= :exp");
+		q.setParameter("exp", id);
+		List<Experimenten> experimenten = q.getResultList();
+		if (experimenten.size() == 1) {
+			return experimenten.get(0);
+		}
+
+		else {
+			return null;
+		}
+	}
+
+	public void uploadenFoto(byte[] fotos, String naam, int id, int id2) {
+		Project p = findProject(id);
+		Experimenten e = findExperiment(id2);
+		Foto foto = new Foto(fotos, naam, e, p);
+		em.joinTransaction();
+		em.persist(foto);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Foto> fotoOphalen(int id) {
+		Query q = null;
+		if (experiment) {
+			q = em.createQuery("SELECT f FROM Foto f WHERE f.experimenten.id = :id ");
+			q.setParameter("id", id);
+
+		} else if (beanProject) {
+			q = em.createQuery("SELECT f FROM Foto f WHERE f.project.id = :id ");
+			q.setParameter("id", id);
+		}
+		if (q != null) {
+			return q.getResultList();
+		} else {
+			return new ArrayList<>();
+		}
+	}
+
+	public Foto vindFoto(int id) {
+		return em.find(Foto.class, id);
+	}
+
+	public String getLocation() {
+		return "{lat: -25.363, lng: 131.044};";
+
+	}
+
+	public Personen geefPersoon() {
+
+		String login = ctx.getCallerPrincipal().getName();
+		return findPerson(login);
+	}
+
+	@Override
+	public List<Experimenten> findExperiment(Project p) {
+		Query q = em.createQuery("SELECT e FROM Experimenten e WHERE e.project.id= :project");
+		q.setParameter("project", p.getId());
+		List<Experimenten> experimenten = q.getResultList();
+		return experimenten;
+	}
+
+	@Override
+	public Personen geefPersoon(int id) {
+		Query q = em.createQuery("SELECT f FROM Personen f WHERE f.idpersonen = :id ");
+		q.setParameter("id", id);
+		List<Personen> pl = q.getResultList();
+		Personen p = pl.get(0);
+
+		return p;
+	}
+
+	@Override
+	public void updatePersoon(String voornaam, String gebruikersnaam, String login, String school, Personen person,
+			String opleiding, String bio) {
+		person.setVoornaam(voornaam);
+		person.setNaam(login);
+		person.setGebruikersnaam(gebruikersnaam);
+		person.setOpleiding(opleiding);
+		person.setBio(bio);
+		person.setSchool(school);
+		em.merge(person);
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage("veranderingen opgeslagen"));
+	}
+
+	@Override
+	public void checkEmail(String username) {
+		Personen p = findPerson(username);
+		if (p == null) {
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage("username", new FacesMessage("e-mail bestaat niet"));
+		}
+	}
+
+	public boolean isExperiment() {
+		return experiment;
+	}
+
+	public List<Project> zoekProjecten(String projectZoekNaam) {
+		Query q = em.createQuery(
+				"SELECT f FROM Project f WHERE f.titel LIKE '%" + projectZoekNaam + "%' AND f.public_ = TRUE");
+		return q.getResultList();
+
+	}
+
+	@Override
+	public List<Project> findUserPublicProjects(int idpersonen, int userId) {
+		Personen p = em.find(Personen.class, userId);
+		if (p != null) {
+			if (p.isAdmin()) {
+				Query q = em.createQuery("SELECT p FROM Project p WHERE p.personen.idpersonen = :idpers");
+				q.setParameter(idpers, idpersonen);
+				return q.getResultList();
+			}
+		}
+		Query q = em.createQuery("SELECT p FROM Project p WHERE p.personen.idpersonen = :idpers AND p.public_ = TRUE");
+		q.setParameter(idpers, idpersonen);
+		return q.getResultList();
+	}
+
+	public String getGebruikersnaam(int idpersonen) {
+		Query q = em.createQuery("SELECT f FROM Personen f WHERE f.idpersonen = :id ");
+		q.setParameter("id", idpersonen);
+		List<Personen> pl = q.getResultList();
+		return pl.get(0).getNaam();
+
+	}
+
+	public List<Personen> zoekGebruikers(String userZoekNaam) {
+		Query q = em.createQuery("SELECT f FROM Personen f WHERE f.Gebruikersnaam LIKE '%" + userZoekNaam + "%'");
+		return q.getResultList();
+
+	}
+
+	public void setExperiment(boolean experiment) {
+		this.experiment = experiment;
+	}
+
+	public boolean isProject() {
+		return beanProject;
+	}
+
+	public void setProject(boolean project) {
+		this.beanProject = project;
+	}
+
+	@Override
+	public Personen findPerson(int id) {
+		return em.find(Personen.class, id);
+	}
+
+	public void addMeting(Meting m) {
+		em.joinTransaction();
+		em.persist(m);
+	}
+
+	@Override
+	public Personen findPerson(String email) {
+
+		Query q = em.createQuery("SELECT p FROM Personen p WHERE p.email= :email");
+		q.setParameter("email", email);
+		List<Personen> persons = q.getResultList();
+
+		if (persons.size() == 1)
+			return persons.get(0);
+		else
+			return null;
+	}
+
+	@Override
+	public void addExperiment(Experimenten e) {
+		em.joinTransaction();
+		em.persist(e);
+	}
+
+	@Override
+	public void addProject(Project p) {
+		em.joinTransaction();
+		em.persist(p);
+	}
+
+	@Override
+	public Meting findMeting(int i) {
+		Query q = em.createQuery("SELECT f FROM Meting f WHERE f.experimenten.id = :idex");
+		q.setParameter("idex", i);
+		return (Meting) q.getResultList().get(0);
+
+	}
+
+	@Override
+	public void addMetingExperiment(Meting meting, Experimenten e) {
+		em.joinTransaction();
+		e.setDate(new Date((e.getDate().getTime() / 1000) * 1000));
+		em.persist(e);
+		Query q = em.createQuery("SELECT e FROM Experimenten e");
+
+		List<Experimenten> e2 = q.getResultList();
+		for (int i = 0; i < e2.size(); i++) {
+			if (e2.get(i).getDate().toString().equals(e.getDate().toString())) {
+				metingEJB.berekenGrafiek(meting, e2.get(i));
+				meting.setExperimenten(e2.get(i));
+				em.persist(meting);
+				return;
+			}
+		}
+
+	}
+
+	@Override
+	public void uploadenFoto(byte[] fotos, String naam) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

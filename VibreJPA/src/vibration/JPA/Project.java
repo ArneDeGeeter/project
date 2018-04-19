@@ -90,8 +90,8 @@ public class Project implements Serializable {
 		return this.public_;
 	}
 
-	public void setPublic_(boolean public_) {
-		this.public_ = public_;
+	public void setPublic_(boolean publicbool) {
+		this.public_ = publicbool;
 	}
 
 	public boolean getTeacher() {
@@ -155,7 +155,7 @@ public class Project implements Serializable {
 	}
 
 	public int getFirstFoto() {
-		if (fotos.size() == 0) {
+		if (fotos.isEmpty()) {
 			return 0;
 		} else {
 			return fotos.get(0).getId();

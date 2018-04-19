@@ -14,6 +14,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import com.sun.media.jfxmedia.logging.Logger;
+
 import vibration.JPA.Experimenten;
 import vibration.JPA.Meting;
 
@@ -36,18 +38,17 @@ public class MetingEJB implements MetingEJBLocal {
 	}
 
 	@Override
-	public boolean checkSTEM(Experimenten experiment){
-		if(experiment.getProject().getTeacher()){return true;}
-		else{return false;}
+	public boolean checkSTEM(Experimenten experiment) {
+		return experiment.getProject().getTeacher();
 	}
-	
+
 	@Override
 	public Experimenten findExperiment(int id) {
 		Query q = em.createQuery("SELECT m FROM Experimenten m WHERE m.id = :id");
 		q.setParameter("id", id);
-		
+
 		List<Experimenten> exp = q.getResultList();
-		
+
 		if (exp.size() == 1) {
 			return exp.get(0);
 		} else
@@ -68,7 +69,7 @@ public class MetingEJB implements MetingEJBLocal {
 
 	}
 
-	public static byte[] FloatArray2ByteArray(ArrayList<Float> values) {
+	public static byte[] floatArray2ByteArray(List<Float> values) {
 		ByteBuffer buffer = ByteBuffer.allocate(4 * values.size());
 
 		for (float value : values) {
@@ -79,46 +80,46 @@ public class MetingEJB implements MetingEJBLocal {
 	}
 
 	@Override
-	public void berekenGrafiek(Meting m,Experimenten e) {
-		
-		ArrayList<byte[]> ba = new ArrayList<byte[]>();
+	public void berekenGrafiek(Meting m, Experimenten e) {
 
-		//De drie byteArrays opvragen
+		ArrayList<byte[]> ba = new ArrayList<>();
+
+		// De drie byteArrays opvragen
 		byte[] z = m.getZ();
 		byte[] y = m.getY();
 		byte[] x = m.getX();
-		int Hertz = m.getHertz();
-		
+		int hertz = m.getHertz();
+
 		// Functie returned 1 float array van float arrays; 1 float array met
 		// f-waarden, 1 met de z-waarden, 1 met y-waarden, 1 met x-waarden
-		ArrayList<ArrayList<Float>> meting = testMeting(z, y, x, Hertz);
+		List<List<Float>> meting = testMeting(z, y, x, hertz);
 
 		// Float arrays omzetten naar byte arrays voor te persisten
-		for (ArrayList<Float> lf : meting) {
-			ba.add(FloatArray2ByteArray(lf));
+		for (List<Float> lf : meting) {
+			ba.add(floatArray2ByteArray(lf));
 		}
 		em.joinTransaction();
-		Meting m1 = new Meting(ba.get(0),ba.get(1),ba.get(2),ba.get(3),e,1);
+		Meting m1 = new Meting(ba.get(0), ba.get(1), ba.get(2), ba.get(3), e, 1);
 		em.persist(m1);
 		e.addMeting(m1);
 		em.merge(m1);
-		
+
 		em.joinTransaction();
-		Meting m2 = new Meting(ba.get(4),ba.get(5),ba.get(6),ba.get(7),e,2);
-		em.persist(m2); 
+		Meting m2 = new Meting(ba.get(4), ba.get(5), ba.get(6), ba.get(7), e, 2);
+		em.persist(m2);
 		e.addMeting(m2);
 		em.merge(m2);
-		
+
 	}
 
-	public ArrayList<ArrayList<Float>> testMeting(byte[] z, byte[] yy, byte[] x, int H) {
+	public List<List<Float>> testMeting(byte[] z, byte[] yy, byte[] x, int h) {
 
-		ArrayList<byte[]> xyz = new ArrayList<byte[]>();
+		ArrayList<byte[]> xyz = new ArrayList<>();
 		xyz.add(z);
 		xyz.add(yy);
 		xyz.add(x);
 
-		ArrayList<ArrayList<Float>> lijst = new ArrayList<ArrayList<Float>>();
+		List<List<Float>> lijst = new ArrayList<>();
 		try {
 
 			Process p = Runtime.getRuntime().exec("cmd");
@@ -128,7 +129,7 @@ public class MetingEJB implements MetingEJBLocal {
 
 			byte[] tijd;
 
-			double Herz = H; 
+			double herz = h;
 
 			ArrayList<Float> y = new ArrayList<Float>();
 			double sizeArray;
@@ -137,9 +138,9 @@ public class MetingEJB implements MetingEJBLocal {
 			int a;
 			double aantalSeconden;
 			String ba = "";
-			
+
 			out.write("octave-cli\n");
-			
+
 			for (int u = 0; u < 3; u++) { // HOOFDFORLUS
 
 				tijd = xyz.get(u);
@@ -152,11 +153,9 @@ public class MetingEJB implements MetingEJBLocal {
 				// Waarden voor Octave
 				sizeArray = y.size(); // Geeft aantal meetpunten
 				eindTijd = sizeArray - 1;
-				periode = 1 / Herz;
+				periode = 1 / herz;
 				a = 0;
-				aantalSeconden = eindTijd / Herz;
-
-				
+				aantalSeconden = eindTijd / herz;
 
 				out.write("t = 0:" + periode + ":" + aantalSeconden + ";\n");
 
@@ -164,150 +163,142 @@ public class MetingEJB implements MetingEJBLocal {
 				out.write("t_resampled = " + a + ":1/Fs:" + aantalSeconden + ";\n");
 
 				// Array aanmaken van gemeten waarden
-				
+
 				StringBuilder sb = new StringBuilder();
 				sb.append("z=[");
-				
+
 				for (int aa = 0; aa < y.size() - 1; aa++) {
-					sb.append( y.get(aa) + ",");
+					sb.append(y.get(aa) + ",");
 				}
-				sb.append( y.get(y.size() - 1) + "];");
+				sb.append(y.get(y.size() - 1) + "];");
 
 				String zArray = sb.toString();
 				out.write(zArray + "\n");
 
 				// Wonderscript van Octave zijn werk laten doen
-				out.write("data_resampled = interp1(t, z, t_resampled, 'spline');\nt_resampled = t_resampled - t_resampled(1);\n"
-						+ "L = length(data_resampled);\nf = Fs*(0:(L/2))/L;\nA2_data = fft(data_resampled); A2 = abs(A2_data/L);\n"
-						+ "A_data = A2(1:L/2+1); A_data(2:end-1) = 2*A_data(2:end-1);\nf1 = 1/Fs*2; f2 = 4/Fs*2;\n"
-						+ "filter_order = 4;\npkg load signal\n[b,a] = butter(filter_order,[f1 f2]);\n"
-						+ "data_filtered"+u+" = filtfilt(b,a,data_resampled);\nA2_data = fft(data_filtered"+u+"); A2 = abs(A2_data/L);\n"
-						+ "A_data"+u+" = A2(1:L/2+1); A_data"+u+"(2:end-1) = 2*A_data"+u+"(2:end-1);\n");
-				
-				
+				out.write(
+						"data_resampled = interp1(t, z, t_resampled, 'spline');\nt_resampled = t_resampled - t_resampled(1);\n"
+								+ "L = length(data_resampled);\nf = Fs*(0:(L/2))/L;\nA2_data = fft(data_resampled); A2 = abs(A2_data/L);\n"
+								+ "A_data = A2(1:L/2+1); A_data(2:end-1) = 2*A_data(2:end-1);\nf1 = 1/Fs*2; f2 = 4/Fs*2;\n"
+								+ "filter_order = 4;\npkg load signal\n[b,a] = butter(filter_order,[f1 f2]);\n"
+								+ "data_filtered" + u + " = filtfilt(b,a,data_resampled);\nA2_data = fft(data_filtered"
+								+ u + "); A2 = abs(A2_data/L);\n" + "A_data" + u + " = A2(1:L/2+1); A_data" + u
+								+ "(2:end-1) = 2*A_data" + u + "(2:end-1);\n");
+
 			}
-			//Eerst lengtes van de arrays laten uitprinten zodat we weten hoeveel getallen we moeten verwachten
-			for(int i=0;i<2;i++){
+			// Eerst lengtes van de arrays laten uitprinten zodat we weten
+			// hoeveel getallen we moeten verwachten
+			for (int i = 0; i < 2; i++) {
 				out.write("printf('%d ',length(A_data));\n");
-				out.write("printf('%f ', A_data"+i+")\nprintf('%f ', f)\n");
-				out.write("printf('%d ',length(data_filtered"+i+"));\n");
-				out.write("printf('%f ', data_filtered"+i+")\nprintf('%f ', t_resampled)\n");
-				
+				out.write("printf('%f ', A_data" + i + ")\nprintf('%f ', f)\n");
+				out.write("printf('%d ',length(data_filtered" + i + "));\n");
+				out.write("printf('%f ', data_filtered" + i + ")\nprintf('%f ', t_resampled)\n");
+
 			}
 			out.write("printf('%d ',length(A_data));\n");
-			out.write("printf('%f ', A_data"+2+")\nprintf('%f ', f)\n");
-			out.write("printf('%d ',length(data_filtered"+2+"));\n");
-			out.write("printf('%f ', data_filtered"+2+")\nprintf('%f ', t_resampled);\n");
-			
+			out.write("printf('%f ', A_data" + 2 + ")\nprintf('%f ', f)\n");
+			out.write("printf('%d ',length(data_filtered" + 2 + "));\n");
+			out.write("printf('%f ', data_filtered" + 2 + ")\nprintf('%f ', t_resampled);\n");
+
 			out.write("quit\n");
 
 			out.flush();
 
 			ba = inp.readLine();
-			
-			
-			
-			
-			
+
 			// 1 grote string omzetten naar 6 float arrays van meetwaarden en
 			// f-waarden
 			String[] getallen = ba.split(" ");
 			ArrayList<Float> f = new ArrayList<Float>();
-			ArrayList<Float> zWaarde = new ArrayList<Float>();
-			ArrayList<Float> yWaarde = new ArrayList<Float>();
-			ArrayList<Float> xWaarde = new ArrayList<Float>();
-			ArrayList<Float> tWaarde = new ArrayList<Float>();
-			ArrayList<Float> zMeetWaarde = new ArrayList<Float>();
-			ArrayList<Float> yMeetWaarde = new ArrayList<Float>();
-			ArrayList<Float> xMeetWaarde = new ArrayList<Float>();
-			
-			
-			int i=0;
-			
-			int size=Integer.parseInt(getallen[i]);
-			i++;
-			
-			//Z-waarde toevoegen
-			for(int e=i;e<i+size;e++){
-				zWaarde.add(Float.parseFloat(getallen[e]));
-			}
-			i+=size;
-			
-			//Frequenties toevoegen
-			for(int e=i;e<i+size;e++){
-				f.add(Float.parseFloat(getallen[e]));
-			}
-			i+=size;
-			
-			size=Integer.parseInt(getallen[i]);
-			i++;
-			
-			//Z-meetwaarden toevoegen
-			for(int e=i;e<i+size;e++){
-				zMeetWaarde.add(Float.parseFloat(getallen[e]));
-			}
-			i+=size;
-			
-			//T-waarden toevoegen
-			for(int e=i;e<i+size;e++){
-				tWaarde.add(Float.parseFloat(getallen[e]));
-			}
-			
-			i+=size;
-			
-			size=Integer.parseInt(getallen[i]);
-			i++;
-			
-			//Y-waarden toevoegen
-			for(int e=i;e<i+size;e++){
-				yWaarde.add(Float.parseFloat(getallen[e]));
-			}
-			i+=2*size;
-			
-			
-			size=Integer.parseInt(getallen[i]);
-			i++;
-			
-			//Y-meetwaarden toevoegen
-			for(int e=i;e<i+size;e++){
-				yMeetWaarde.add(Float.parseFloat(getallen[e]));
-			}
-			i+=2*size;
-			size=Integer.parseInt(getallen[i]);
+			ArrayList<Float> zWaarde = new ArrayList<>();
+			ArrayList<Float> yWaarde = new ArrayList<>();
+			ArrayList<Float> xWaarde = new ArrayList<>();
+			ArrayList<Float> tWaarde = new ArrayList<>();
+			ArrayList<Float> zMeetWaarde = new ArrayList<>();
+			ArrayList<Float> yMeetWaarde = new ArrayList<>();
+			ArrayList<Float> xMeetWaarde = new ArrayList<>();
+
+			int i = 0;
+
+			int size = Integer.parseInt(getallen[i]);
 			i++;
 
-			//X-waarden toevoegen
-			for(int e=i;e<i+size;e++){
+			// Z-waarde toevoegen
+			for (int e = i; e < i + size; e++) {
+				zWaarde.add(Float.parseFloat(getallen[e]));
+			}
+			i += size;
+
+			// Frequenties toevoegen
+			for (int e = i; e < i + size; e++) {
+				f.add(Float.parseFloat(getallen[e]));
+			}
+			i += size;
+
+			size = Integer.parseInt(getallen[i]);
+			i++;
+
+			// Z-meetwaarden toevoegen
+			for (int e = i; e < i + size; e++) {
+				zMeetWaarde.add(Float.parseFloat(getallen[e]));
+			}
+			i += size;
+
+			// T-waarden toevoegen
+			for (int e = i; e < i + size; e++) {
+				tWaarde.add(Float.parseFloat(getallen[e]));
+			}
+
+			i += size;
+
+			size = Integer.parseInt(getallen[i]);
+			i++;
+
+			// Y-waarden toevoegen
+			for (int e = i; e < i + size; e++) {
+				yWaarde.add(Float.parseFloat(getallen[e]));
+			}
+			i += 2 * size;
+
+			size = Integer.parseInt(getallen[i]);
+			i++;
+
+			// Y-meetwaarden toevoegen
+			for (int e = i; e < i + size; e++) {
+				yMeetWaarde.add(Float.parseFloat(getallen[e]));
+			}
+			i += 2 * size;
+			size = Integer.parseInt(getallen[i]);
+			i++;
+
+			// X-waarden toevoegen
+			for (int e = i; e < i + size; e++) {
 				xWaarde.add(Float.parseFloat(getallen[e]));
 			}
-			i+=2*size;
-			
-			
-			size=Integer.parseInt(getallen[i]);
+			i += 2 * size;
+
+			size = Integer.parseInt(getallen[i]);
 			i++;
-			
-			//X-meetwaarden toevoegen
-			for(int e=i;e<i+size;e++){
+
+			// X-meetwaarden toevoegen
+			for (int e = i; e < i + size; e++) {
 				xMeetWaarde.add(Float.parseFloat(getallen[e]));
 			}
 
-			
 			lijst.add(f);
 			lijst.add(zWaarde);
 			lijst.add(yWaarde);
 			lijst.add(xWaarde);
-			
+
 			lijst.add(tWaarde);
 			lijst.add(zMeetWaarde);
 			lijst.add(yMeetWaarde);
 			lijst.add(xMeetWaarde);
-			
-			
-			
+
 			return lijst;
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 			return lijst;
 		}
 

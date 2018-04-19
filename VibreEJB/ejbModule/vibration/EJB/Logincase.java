@@ -21,6 +21,8 @@ import javax.persistence.Query;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import com.sun.media.jfxmedia.logging.Logger;
+
 import vibration.JPA.Personen;
 
 @Stateless
@@ -39,7 +41,6 @@ public class Logincase implements LogincaseLocal {
 		throw new UnsupportedOperationException();
 	}
 
-	final String SECRET = Base64.getEncoder().encodeToString("SecretKeyForProjectVerySecure".getBytes());
 	String token;
 	private String selectPersonEmail="SELECT p FROM Personen p WHERE p.email = :email";
 	private String email="email";
@@ -111,8 +112,7 @@ public class Logincase implements LogincaseLocal {
 			try {
 				externalContext.redirect("/VibreWeb/error/registerError.xhtml");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Logger.logMsg(1, e.toString());
 			}
 		} else {
 			Personen p = new Personen(naam, hashedPass, email, school, "Spotter");
@@ -124,8 +124,7 @@ public class Logincase implements LogincaseLocal {
 			try {
 				externalContext.redirect("/VibreWeb/registerSucces.xhtml");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Logger.logMsg(1, e.toString());
 			}
 
 		}
@@ -140,8 +139,7 @@ public class Logincase implements LogincaseLocal {
 			byte[] hashb = digest.digest(pass.getBytes(StandardCharsets.UTF_8));
 			return Base64.getEncoder().encodeToString(hashb);
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 		}
 		return null;
 	}
@@ -149,7 +147,6 @@ public class Logincase implements LogincaseLocal {
 
 	@Override
 	public String loginUser(String email) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

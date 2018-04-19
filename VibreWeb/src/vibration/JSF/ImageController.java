@@ -18,6 +18,8 @@ import javax.imageio.ImageIO;
 import javax.inject.Named;
 import javax.servlet.http.Part;
 
+import com.sun.media.jfxmedia.logging.Logger;
+
 import vibration.EJB.MetingEJBLocal;
 import vibration.EJB.UserManagementEJBLocal;
 import vibration.JPA.Experimenten;
@@ -56,8 +58,8 @@ public class ImageController implements Serializable {
 			FacesContext.getCurrentInstance().getExternalContext()
 					.redirect("/VibreWeb/users/project.xhtml?project=" + projectId);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
+
 		}
 	}
 
@@ -91,8 +93,8 @@ public class ImageController implements Serializable {
 			FacesContext.getCurrentInstance().getExternalContext()
 					.redirect("publicProject.xhtml?project=" + experiment.getProject().getId());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
+
 		}
 	}
 
@@ -102,8 +104,8 @@ public class ImageController implements Serializable {
 			FacesContext.getCurrentInstance().getExternalContext()
 					.redirect("/VibreWeb/users/project.xhtml?project=" + experiment.getProject().getId());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
+
 		}
 	}
 
@@ -113,8 +115,8 @@ public class ImageController implements Serializable {
 			FacesContext.getCurrentInstance().getExternalContext()
 					.redirect("profielpaginaBezoekers.xhtml?gebruiker=" + project.getPersonen().getIdpersonen());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
+
 		}
 	}
 
@@ -123,8 +125,8 @@ public class ImageController implements Serializable {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().redirect("/VibreWeb/spotter/profielpagina.xhtml");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
+
 		}
 	}
 
@@ -134,7 +136,7 @@ public class ImageController implements Serializable {
 			FacesContext.getCurrentInstance().getExternalContext()
 					.redirect("/VibreWeb/users/ImageUpload.xhtml?project=" + project.getId());
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 		}
 
 	}
@@ -144,7 +146,7 @@ public class ImageController implements Serializable {
 			FacesContext.getCurrentInstance().getExternalContext()
 					.redirect("/VibreWeb/users/ImageUpload.xhtml?experiment=" + experiment.getId());
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 		}
 	}
 
@@ -196,7 +198,7 @@ public class ImageController implements Serializable {
 				buffer.write(bytes, 0, read);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 		}
 
 		byte[] image = buffer.toByteArray();
@@ -215,7 +217,7 @@ public class ImageController implements Serializable {
 							.redirect("/VibreWeb//users/project.xhtml?project=" + project.getId());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Logger.logMsg(1, e.toString());
 				}
 			} else if (project.getId() == 0 && experiment.getId() != 0) {
 				userEJB.uploadenFoto(rescaledImage, naam, 0, experiment.getId());
@@ -225,7 +227,7 @@ public class ImageController implements Serializable {
 							.redirect("/VibreWeb//users/experiment.xhtml?experiment=" + experiment.getId());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Logger.logMsg(1, e.toString());
 				}
 			}
 		}

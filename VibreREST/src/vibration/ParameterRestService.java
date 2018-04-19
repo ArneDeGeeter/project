@@ -54,7 +54,7 @@ public class ParameterRestService {
 	private static final long serialVersionUID = -1953184904583821340L;
 	@PersistenceContext
 	private EntityManager em = Persistence.createEntityManagerFactory("VibreJPA").createEntityManager();
-	final String SECRET = Base64.getEncoder().encodeToString("SecretKeyForProjectVerySecure".getBytes());
+	private static final String SECRET = Base64.getEncoder().encodeToString("SecretKeyForProjectVerySecure".getBytes());
 
 	@EJB
 	private UserManagementEJBLocal userEJB;
@@ -127,7 +127,7 @@ public class ParameterRestService {
 	private ArrayList<Float> getFloatArray(byte[] x) throws IOException {
 		ByteArrayInputStream bas = new ByteArrayInputStream(x);
 		DataInputStream ds = new DataInputStream(bas);
-		ArrayList<Float> xList = new ArrayList<Float>();
+		ArrayList<Float> xList = new ArrayList<>();
 		for (int i = 0; i < x.length / 4; i++) {
 			xList.add(ds.readFloat());
 		}
@@ -215,7 +215,7 @@ public class ParameterRestService {
 	@Path("experiment")
 	@Produces("text/plain")
 	public String experiment(@HeaderParam("token") String token, @HeaderParam("projID") String projID)
-			throws IOException {
+			 {
 		List<Experimenten> experimenten = userEJB.findExperiment(userEJB.findProject(Integer.parseInt(projID)));
 		StringBuilder s = new StringBuilder();
 
@@ -238,7 +238,7 @@ public class ParameterRestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public String getMeting(@HeaderParam("token") String token, @HeaderParam("type") String type,
 			@HeaderParam("hertz") String hertz, @HeaderParam("projID") String projID, Meting2 m,
-			@HeaderParam("experimentNaam") String experimentNaam) throws IOException {
+			@HeaderParam("experimentNaam") String experimentNaam) {
 		return maakMeting(token, type, projID, m, experimentNaam, Integer.parseInt(hertz));
 
 	}
@@ -269,9 +269,9 @@ public class ParameterRestService {
 			ArrayList<Float> z = stringToArray(m.getZ());
 
 			Meting meting = new Meting();
-			meting.setX(FloatArray2ByteArray(x));
-			meting.setY(FloatArray2ByteArray(y));
-			meting.setZ(FloatArray2ByteArray(z));
+			meting.setX(floatArray2ByteArray(x));
+			meting.setY(floatArray2ByteArray(y));
+			meting.setZ(floatArray2ByteArray(z));
 			meting.setHertz((hertz));
 
 			Experimenten e = new Experimenten();
@@ -288,7 +288,7 @@ public class ParameterRestService {
 		return null;
 	}
 
-	public static byte[] FloatArray2ByteArray(ArrayList<Float> values) {
+	public static byte[] floatArray2ByteArray(List<Float> values) {
 		ByteBuffer buffer = ByteBuffer.allocate(4 * values.size());
 
 		for (float value : values) {
@@ -331,16 +331,8 @@ public class ParameterRestService {
 	private Jws<Claims> checkKey(String t) {
 		try {
 			Jwts.parser().setSigningKey(SECRET).parseClaimsJws(t);
-
-			Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(t);
-			return claims;
-		} catch (SignatureException e) {
-			return null;
-		} catch (MissingClaimException e) {
-			return null;
-		} catch (IncorrectClaimException e) {
-			return null;
-		} catch (Exception e) {
+			return Jwts.parser().setSigningKey(SECRET).parseClaimsJws(t);
+		} catch (SignatureException |MissingClaimException |IncorrectClaimException e) {
 			return null;
 		}
 

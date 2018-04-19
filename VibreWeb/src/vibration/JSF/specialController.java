@@ -44,7 +44,6 @@ public class specialController implements Serializable {
 	}
 
 	public void accesCheck() {
-		System.out.println("activated "+ url);
 		if (gebruiker.getIdpersonen() == 0) {
 			redirectionMap.get(url).run();
 		}
@@ -131,10 +130,8 @@ public class specialController implements Serializable {
 		return url;
 	}
 	public void urlSet(){
-		System.out.println("urlSet actief");
 		FacesContext context = FacesContext.getCurrentInstance();
 		url = context.getExternalContext().getRequestParameterMap().get("urlForm:url");
-		System.out.println(url);
 	}
 	public void setUrl(String url) {
 	

@@ -1,12 +1,15 @@
 package vibration.JPA;
 
 import java.io.Serializable;
-import javax.persistence.*;
-
 import java.util.Date;
 import java.util.List;
-import static javax.persistence.AccessType.FIELD;
-import static javax.persistence.AccessType.PROPERTY;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * The persistent class for the personen database table.
@@ -33,9 +36,9 @@ public class Personen implements Serializable {
 	private String voornaam;
 
 	private String wachtwoord;
-	
+
 	private String Opleiding;
-	
+
 	private String Gebruikersnaam;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -152,14 +155,10 @@ public class Personen implements Serializable {
 
 	public boolean isAdmin() {
 
-		if (this.rol.equals("Admin")) {
-			return true;
-		} else {
-			return false;
-		}
+		return rol.equals("Admin");
 	}
-	
-	public String getOpleiding(){
+
+	public String getOpleiding() {
 		return Opleiding;
 	}
 

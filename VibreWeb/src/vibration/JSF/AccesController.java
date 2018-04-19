@@ -3,14 +3,13 @@ package vibration.JSF;
 import java.io.IOException;
 import java.io.Serializable;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+
+import com.sun.media.jfxmedia.logging.Logger;
 
 import vibration.EJB.LogincaseLocal;
 import vibration.EJB.UserManagementEJBLocal;
@@ -75,8 +74,7 @@ public class AccesController implements Serializable {
 				}
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+Logger.logMsg(1, e.toString());
 		}
 	}
 
@@ -101,8 +99,7 @@ public class AccesController implements Serializable {
 				}
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 		}
 	}
 

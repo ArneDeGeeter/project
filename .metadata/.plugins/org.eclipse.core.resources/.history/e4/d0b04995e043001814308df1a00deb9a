@@ -1,0 +1,188 @@
+package vibration.JPA;
+
+import java.io.Serializable;
+import javax.persistence.*;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * The persistent class for the project database table.
+ * 
+ */
+@Entity
+@NamedQuery(name = "Project.findAll", query = "SELECT p FROM Project p")
+public class Project implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	private int id;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date aanmaakDatum;
+
+	private String beschrijving;
+
+	private String projectToken;
+
+	@Column(name = "Public")
+	private boolean public_;
+
+	private boolean teacher;
+
+	private String titel;
+
+	// bi-directional many-to-one association to Experimenten
+	@OneToMany(mappedBy = "project")
+	private List<Experimenten> experimentens;
+
+	// bi-directional many-to-one association to Foto
+	@OneToMany(mappedBy = "project")
+	private List<Foto> fotos;
+
+	// bi-directional many-to-one association to Personen
+	@ManyToOne
+	private Personen personen;
+
+	// bi-directional one-to-one association to Locaty
+	@OneToOne(mappedBy = "project")
+	private Locaty locaty;
+
+	public Project() {
+	}
+
+	public Project(String projID) {
+		titel = projID;
+	}
+
+	public int getId() {
+		return this.id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public Date getAanmaakDatum() {
+		return this.aanmaakDatum;
+	}
+
+	public void setAanmaakDatum(Date aanmaakDatum) {
+		this.aanmaakDatum = aanmaakDatum;
+	}
+
+	public String getBeschrijving() {
+		return this.beschrijving;
+	}
+
+	public void setBeschrijving(String beschrijving) {
+		this.beschrijving = beschrijving;
+	}
+
+	public String getProjectToken() {
+		return this.projectToken;
+	}
+
+	public void setProjectToken(String projectToken) {
+		this.projectToken = projectToken;
+	}
+
+	public boolean getPublic_() {
+		return this.public_;
+	}
+
+	public void setPublic_(boolean publicbool) {
+		this.public_ = publicbool;
+	}
+
+	public boolean getTeacher() {
+		return this.teacher;
+	}
+
+	public void setTeacher(boolean teacher) {
+		this.teacher = teacher;
+	}
+
+	public String getTitel() {
+		return this.titel;
+	}
+
+	public void setTitel(String titel) {
+		this.titel = titel;
+	}
+
+	public List<Experimenten> getExperimentens() {
+		return this.experimentens;
+	}
+
+	public void setExperimentens(List<Experimenten> experimentens) {
+		this.experimentens = experimentens;
+	}
+
+	public Experimenten addExperimenten(Experimenten experimenten) {
+		getExperimentens().add(experimenten);
+		experimenten.setProject(this);
+
+		return experimenten;
+	}
+
+	public Experimenten removeExperimenten(Experimenten experimenten) {
+		getExperimentens().remove(experimenten);
+		experimenten.setProject(null);
+
+		return experimenten;
+	}
+
+	public List<Foto> getFotos() {
+		return this.fotos;
+	}
+
+	public void setFotos(List<Foto> fotos) {
+		this.fotos = fotos;
+	}
+
+	public Foto addFoto(Foto foto) {
+		getFotos().add(foto);
+		foto.setProject(this);
+
+		return foto;
+	}
+
+	public Foto removeFoto(Foto foto) {
+		getFotos().remove(foto);
+		foto.setProject(null);
+
+		return foto;
+	}
+
+	public int getFirstFoto() {
+		if (fotos.size() == 0) {
+			return 0;
+		} else {
+			return fotos.get(0).getId();
+		}
+
+	}
+
+	public Personen getPersonen() {
+		return this.personen;
+	}
+
+	public void setPersonen(Personen personen) {
+		this.personen = personen;
+	}
+
+	public Locaty getLocaty() {
+		return this.locaty;
+	}
+
+	public void setLocaty(Locaty locaty) {
+		this.locaty = locaty;
+	}
+
+	public String getTeacherText(){
+		if(teacher){
+			return "Stem";
+		}
+		return "Normaal";
+	}
+}

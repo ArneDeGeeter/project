@@ -3,6 +3,8 @@ import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import com.sun.media.jfxmedia.logging.Logger;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
@@ -16,27 +18,30 @@ import org.w3c.dom.Element;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.PriorityQueue;
 
-
-class Process{
+class Process {
 	int pid;
 	int arrivalTime;
 	int serviceTime;
 	int remainingTime;
 	int startTime;
-	int eindtijd=0;
+	int eindtijd = 0;
 	int omloopTijd;
 	int wachtTijd;
 	int normOmloopTijd;
-	
-	public Process(int a,int b,int c, int d) {
-		pid=a;arrivalTime=b;serviceTime=c;remainingTime=d;
+
+	public Process(int a, int b, int c, int d) {
+		pid = a;
+		arrivalTime = b;
+		serviceTime = c;
+		remainingTime = d;
 	}
-	
-	public int getRemainingTime() {return remainingTime;}
-	
+
+	public int getRemainingTime() {
+		return remainingTime;
+	}
+
 	public int getArrivalTime() {
 		return arrivalTime;
 	}
@@ -87,202 +92,198 @@ class Process{
 	public int getOmlooptijd() {
 		return omloopTijd;
 	}
-	
+
 	public boolean processed() {
 		remainingTime--;
-		if(remainingTime>0) {return false;}
-		else {return true;}
+		return remainingTime <= 0;
 	}
 }
 
-class ArrivalTimeComparator implements Comparator<Process>{
+class ArrivalTimeComparator implements Comparator<Process> {
 	@Override
 	public int compare(Process o1, Process o2) {
-		return o1.getArrivalTime()-o2.getArrivalTime();
+		return o1.getArrivalTime() - o2.getArrivalTime();
 	}
 }
 
-class RemainingTimeComparator implements Comparator<Process>{
+class RemainingTimeComparator implements Comparator<Process> {
 	@Override
 	public int compare(Process o1, Process o2) {
-		return o1.getRemainingTime()-o2.getRemainingTime();
+		return o1.getRemainingTime() - o2.getRemainingTime();
 	}
 }
 
-class ServiceTimeComparator implements Comparator<Process>{
+class ServiceTimeComparator implements Comparator<Process> {
 	@Override
 	public int compare(Process o1, Process o2) {
-		return o1.getServiceTime()-o2.getServiceTime();
+		return o1.getServiceTime() - o2.getServiceTime();
 	}
 }
 
-public class Main extends Application{
+public class Main extends Application {
 
 	public static void main(String[] args) {
 		launch(args);
 	}
-  
-public void start(Stage stage) {
-	stage.setTitle("Grafieken SRT");
-	//SRT and RR
-	// defining the axes
-	final NumberAxis xAxis = new NumberAxis();
-	final NumberAxis yAxis = new NumberAxis();
-			
-	final NumberAxis xAxis2 = new NumberAxis();
-	final NumberAxis yAxis2 = new NumberAxis();
-	xAxis.setLabel("");
-			
-	// creating the chart
-	final LineChart<Number, Number> lineChart1 = new LineChart<Number, Number>(xAxis, yAxis);
-	final LineChart<Number, Number> lineChart2 = new LineChart<Number, Number>(xAxis2, yAxis2);
-	lineChart1.setTitle("genormalizeerde TAT");
-	lineChart2.setTitle("Wachttijd");
-	// defining a series
-	XYChart.Series series1 = new XYChart.Series();
-	series1.setName("genormalizeerde TAT ifv percentiel");
-	XYChart.Series series2 = new XYChart.Series();
-	series2.setName("Wachttijd ifv percentiel");
 
-	
-	  
-	Process p;
-	int pid;
-	int at;
-	int st;
-	int clock=10000;
-	double aantalProc = 50000;
-	int normOmloopPPC = 0;
-	int wachtPPC = 0;
-	double gemOmloop = 0;
-	double gemNormOmloop = 0;
-	double gemWacht = 0;
-	double percentiel = aantalProc / 100;
-	
-	Comparator<Process> ATcomp = new ArrivalTimeComparator();	
-	Comparator<Process> RTcomp = new RemainingTimeComparator();	
-	
-	//2 priority queue's aanmaken
-	PriorityQueue<Process> ATqueue = new PriorityQueue<Process>((int)aantalProc, ATcomp);
-	PriorityQueue<Process> RTqueue = new PriorityQueue<Process>((int)aantalProc, RTcomp);  
-	
-    try {
+	public void start(Stage stage) {
+		stage.setTitle("Grafieken SRT");
+		// SRT and RR
+		// defining the axes
+		final NumberAxis xAxis = new NumberAxis();
+		final NumberAxis yAxis = new NumberAxis();
 
-	File fXmlFile = new File("processen50000.xml");
-	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-	Document doc = dBuilder.parse(fXmlFile);
-			
-	//optional, but recommended
-	//read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
-	doc.getDocumentElement().normalize();
+		final NumberAxis xAxis2 = new NumberAxis();
+		final NumberAxis yAxis2 = new NumberAxis();
+		xAxis.setLabel("");
 
-			
-	NodeList nList = doc.getElementsByTagName("process");
-			
+		// creating the chart
+		final LineChart<Number, Number> lineChart1 = new LineChart<>(xAxis, yAxis);
+		final LineChart<Number, Number> lineChart2 = new LineChart<>(xAxis2, yAxis2);
+		lineChart1.setTitle("genormalizeerde TAT");
+		lineChart2.setTitle("Wachttijd");
+		// defining a series
+		XYChart.Series series1 = new XYChart.Series();
+		series1.setName("genormalizeerde TAT ifv percentiel");
+		XYChart.Series series2 = new XYChart.Series();
+		series2.setName("Wachttijd ifv percentiel");
 
-	
-	for (int temp = 0; temp < nList.getLength(); temp++) {
+		Process p;
+		int pid;
+		int at;
+		int st;
+		int clock = 10000;
+		double aantalProc = 50000;
+		int normOmloopPPC = 0;
+		int wachtPPC = 0;
+		double gemOmloop = 0;
+		double gemNormOmloop = 0;
+		double gemWacht = 0;
+		double percentiel = aantalProc / 100;
 
-		Node nNode = nList.item(temp);
-				
-		if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+		Comparator<Process> ATcomp = new ArrivalTimeComparator();
+		Comparator<Process> RTcomp = new RemainingTimeComparator();
 
-			Element eElement = (Element) nNode;
+		// 2 priority queue's aanmaken
+		PriorityQueue<Process> ATqueue = new PriorityQueue<>((int) aantalProc, ATcomp);
+		PriorityQueue<Process> RTqueue = new PriorityQueue<>((int) aantalProc, RTcomp);
 
-			
-			
-			pid= Integer.parseInt(eElement.getElementsByTagName("pid").item(0).getTextContent());
-			at= Integer.parseInt(eElement.getElementsByTagName("arrivaltime").item(0).getTextContent());
-			st=Integer.parseInt(eElement.getElementsByTagName("servicetime").item(0).getTextContent());
-			
-			if(at<clock) {clock=at;}
-			
-			p=new Process(pid,at,st,st);
-			
-			ATqueue.add(p);
+		try {
+
+			File fXmlFile = new File("processen50000.xml");
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(fXmlFile);
+
+			// optional, but recommended
+			// read this -
+			// http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
+			doc.getDocumentElement().normalize();
+
+			NodeList nList = doc.getElementsByTagName("process");
+
+			for (int temp = 0; temp < nList.getLength(); temp++) {
+
+				Node nNode = nList.item(temp);
+
+				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+
+					Element eElement = (Element) nNode;
+
+					pid = Integer.parseInt(eElement.getElementsByTagName("pid").item(0).getTextContent());
+					at = Integer.parseInt(eElement.getElementsByTagName("arrivaltime").item(0).getTextContent());
+					st = Integer.parseInt(eElement.getElementsByTagName("servicetime").item(0).getTextContent());
+
+					if (at < clock) {
+						clock = at;
+					}
+
+					p = new Process(pid, at, st, st);
+
+					ATqueue.add(p);
+				}
+			}
+		} catch (Exception e) {
+			Logger.logMsg(1, e.toString());
 		}
-	}
-    } catch (Exception e) {
-	e.printStackTrace();
-    }
-    
-    //Start van Shortest Remaining Time-Algorithme
-    
-    
-    ArrayList<Process> afgewerkteProcessen=new ArrayList<Process>();
-    boolean stoppen;
-    while(ATqueue.size()!=0||RTqueue.size()!=0) {
-    	if(ATqueue.size()!=0) {
-    	stoppen=false;
-    	while(!stoppen) {
-    		if(ATqueue.element().getArrivalTime()<clock) {RTqueue.add(ATqueue.remove());if(ATqueue.size()==0) {stoppen=true;}}
-    		else {stoppen=true;}
-    	}
-    	}
-    	
-    	
-    	if(RTqueue.size()!=0) {
-    		if(RTqueue.element().processed()) {
-    			RTqueue.element().setEindtijd(clock);
-    			afgewerkteProcessen.add(RTqueue.remove());
-    			
-    		}
-    	}
-    	clock++;
-    	
-     }
-    
-    
-    double gemOmloopTijd=0;
-    double gemNormOmloopTijd=0;
-    
-    for(Process proc:afgewerkteProcessen) {
-    	gemOmloopTijd+=proc.setOmlooptijd();
-    	gemNormOmloopTijd+=proc.setNormOmloopTijd();
-    	
-    }
-    
-    
-    
-    gemOmloopTijd=gemOmloopTijd/afgewerkteProcessen.size();
-    gemNormOmloopTijd=gemNormOmloopTijd/afgewerkteProcessen.size();
-    
-    
-    
-    
-    Comparator<Process> STcomp = new ServiceTimeComparator();
-    PriorityQueue<Process> STqueue = new PriorityQueue<Process>((int)aantalProc, STcomp);
-    
-    for(Process proc:afgewerkteProcessen) {
-    	STqueue.add(proc);}
-    
-    int i = 0;
-	for (Process proc : STqueue) {
-		normOmloopPPC += proc.getNormOmloopTijd();
-		wachtPPC += proc.getWachtTijd();
 
-		if (i % (percentiel) == 0) {
-			series1.getData().add(new XYChart.Data(i / percentiel, normOmloopPPC / percentiel));
-			series2.getData().add(new XYChart.Data(i / percentiel, wachtPPC / percentiel));
-			normOmloopPPC = 0;
-			wachtPPC = 0;
+		// Start van Shortest Remaining Time-Algorithme
+
+		ArrayList<Process> afgewerkteProcessen = new ArrayList<>();
+		boolean stoppen;
+		while (!ATqueue.isEmpty()|| !RTqueue.isEmpty()) {
+			if (!ATqueue.isEmpty()) {
+				stoppen = false;
+				while (!stoppen) {
+					if (ATqueue.element().getArrivalTime() < clock) {
+						RTqueue.add(ATqueue.remove());
+						if (ATqueue.isEmpty()) {
+							stoppen = true;
+						}
+					} else {
+						stoppen = true;
+					}
+				}
+			}
+
+			if (!RTqueue.isEmpty()) {
+				if (RTqueue.element().processed()) {
+					RTqueue.element().setEindtijd(clock);
+					afgewerkteProcessen.add(RTqueue.remove());
+
+				}
+			}
+			clock++;
+
 		}
-		i++;
+
+		// Kheb geen idee hoe belangrijk deze variablen zijn, ma kga ze hier
+		// gewoon laten staan
+		double gemOmloopTijd = 0;
+		double gemNormOmloopTijd = 0;
+		double gemWachtTijd = 0;
+
+		for (Process proc : afgewerkteProcessen) {
+			gemOmloopTijd += proc.setOmlooptijd();
+			gemNormOmloopTijd += proc.setNormOmloopTijd();
+			gemWachtTijd += proc.setWachtTijd();
+
+		}
+
+		gemOmloopTijd = gemOmloopTijd / afgewerkteProcessen.size();
+		gemNormOmloopTijd = gemNormOmloopTijd / afgewerkteProcessen.size();
+		gemWachtTijd = gemWachtTijd / afgewerkteProcessen.size();
+
+		Comparator<Process> STcomp = new ServiceTimeComparator();
+		PriorityQueue<Process> STqueue = new PriorityQueue<>((int) aantalProc, STcomp);
+
+		for (Process proc : afgewerkteProcessen) {
+			STqueue.add(proc);
+		}
+
+		int i = 0;
+		for (Process proc : STqueue) {
+			normOmloopPPC += proc.getNormOmloopTijd();
+			wachtPPC += proc.getWachtTijd();
+
+			if (i % (percentiel) == 0) {
+				series1.getData().add(new XYChart.Data(i / percentiel, normOmloopPPC / percentiel));
+				series2.getData().add(new XYChart.Data(i / percentiel, wachtPPC / percentiel));
+				normOmloopPPC = 0;
+				wachtPPC = 0;
+			}
+			i++;
+		}
+
+		FlowPane root = new FlowPane();
+		root.getChildren().addAll(lineChart1, lineChart2);
+		Scene scene = new Scene(root, 800, 1000);
+		lineChart1.getData().add(series1);
+		lineChart2.getData().add(series2);
+		stage.setScene(scene);
+
+		stage.show();
+
 	}
-	
-
-	FlowPane root = new FlowPane();
-	root.getChildren().addAll(lineChart1, lineChart2);
-	Scene scene = new Scene(root,800, 1000);
-	lineChart1.getData().add(series1);
-	lineChart2.getData().add(series2);
-	stage.setScene(scene);
-
-	stage.show();
-    
-    
- 
-}
 
 }

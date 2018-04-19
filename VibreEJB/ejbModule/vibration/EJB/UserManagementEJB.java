@@ -89,11 +89,7 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 	@Override
 	public boolean checkStatus(int id) {
 		Project p = em.find(Project.class, id);
-		if (p.getProjectToken() == null) {
-			return false;
-		} else {
-			return true;
-		}
+		return p.getProjectToken() != null;
 	}
 
 	@Override
@@ -184,8 +180,7 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 	public List<Experimenten> findExperimenten(Project p) {
 		Query q = em.createQuery("SELECT e FROM Experimenten e WHERE e.project.id= :project");
 		q.setParameter("project", p.getId());
-		List<Experimenten> experimenten = q.getResultList();
-		return experimenten;
+		return q.getResultList();
 	}
 
 	@Override
@@ -247,8 +242,7 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 	public List<Experimenten> findExperiment(Project p) {
 		Query q = em.createQuery("SELECT e FROM Experimenten e WHERE e.project.id= :project");
 		q.setParameter("project", p.getId());
-		List<Experimenten> experimenten = q.getResultList();
-		return experimenten;
+		return q.getResultList();
 	}
 
 	@Override
@@ -256,9 +250,8 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 		Query q = em.createQuery("SELECT f FROM Personen f WHERE f.idpersonen = :id ");
 		q.setParameter("id", id);
 		List<Personen> pl = q.getResultList();
-		Personen p = pl.get(0);
 
-		return p;
+		return pl.get(0);
 	}
 
 	@Override
