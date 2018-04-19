@@ -34,7 +34,7 @@ public class SearchController implements Serializable {
 	private static final String NIETBESCHIKBAAR="Niet beschikbaar";
 	
 	// zoekfuncties
-	private List<Project> projecten = new ArrayList<Project>();
+	private List<Project> projecten = new ArrayList<>();
 	private List<Project> userProjects;
 	private String projectZoekNaam;
 	private String userZoekNaam;

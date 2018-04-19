@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import com.sun.media.jfxmedia.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
@@ -53,9 +54,9 @@ public class ProjectController implements Serializable {
 	private double lng;
 
 	// selecteren waarden uit tabellen
-	private List<Project> projects = new ArrayList<Project>();
+	private List<Project> projects = new ArrayList<>();
 	private Project selectedProject;
-	private List<Project> userProjects = new ArrayList<Project>();
+	private List<Project> userProjects = new ArrayList<>();
 
 	// weer te geven waarden
 	public String toonBeschrijving() {
@@ -204,7 +205,7 @@ public class ProjectController implements Serializable {
 			FacesContext.getCurrentInstance().getExternalContext().redirect("/VibreWeb/spotter/profielpagina.xhtml");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 		}
 	}
 

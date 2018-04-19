@@ -1,8 +1,10 @@
 package vibration.JSF;
 
 import java.io.IOException;
+import com.sun.media.jfxmedia.logging.Logger;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -26,7 +28,7 @@ public class specialController implements Serializable {
 	@EJB
 	private LogincaseLocal loginEJB;
 
-	private HashMap<String, Runnable> redirectionMap = new HashMap<String, Runnable>();
+	private HashMap<String, Runnable> redirectionMap = new HashMap<>();
 	private String url;
 	private Personen gebruiker = new Personen();
 
@@ -54,7 +56,7 @@ public class specialController implements Serializable {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().redirect("/VibreWeb/index.xhtml");
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 		}
 	}
 
@@ -62,7 +64,7 @@ public class specialController implements Serializable {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().redirect("/VibreWeb/projectenZoekpagina.xhtml");
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 		}
 	}
 
@@ -70,7 +72,7 @@ public class specialController implements Serializable {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().redirect("/VibreWeb/userZoekPagina.xhtml");
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 		}
 	}
 
@@ -78,7 +80,7 @@ public class specialController implements Serializable {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().redirect("/VibreWeb/register.xhtml");
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 		}
 	}
 
@@ -87,7 +89,7 @@ public class specialController implements Serializable {
 			FacesContext.getCurrentInstance().getExternalContext()
 					.redirect("/VibreWeb/error/onbestaandePaginaError.xhtml");
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 		}
 	}
 
@@ -100,7 +102,7 @@ public class specialController implements Serializable {
 				FacesContext.getCurrentInstance().getExternalContext().redirect("/VibreWeb/login.xhtml");
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 		}
 
 	}
@@ -113,17 +115,17 @@ public class specialController implements Serializable {
 				FacesContext.getCurrentInstance().getExternalContext().redirect("/VibreWeb/login.xhtml");
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 		}
 
 	}
 
-	public HashMap<String, Runnable> getRedirectionMap() {
+	public Map<String, Runnable> getRedirectionMap() {
 		return redirectionMap;
 	}
 
-	public void setRedirectionMap(HashMap<String, Runnable> redirectionMap) {
-		this.redirectionMap = redirectionMap;
+	public void setRedirectionMap(Map<String, Runnable> redirectionMap) {
+		this.redirectionMap = (HashMap<String, Runnable>) redirectionMap;
 	}
 
 	public String getUrl() {

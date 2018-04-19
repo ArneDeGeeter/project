@@ -1,20 +1,15 @@
 package vibration.JSF;
 
 import java.io.IOException;
-
 import java.io.Serializable;
 
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import com.sun.media.jfxmedia.logging.Logger;
 
 import vibration.EJB.LogincaseLocal;
-import vibration.EJB.UserManagementEJBLocal;
-import vibration.JPA.Experimenten;
-import vibration.JPA.Project;
 
 @Named("navigationController")
 @ViewScoped
@@ -24,9 +19,10 @@ public class NavigationController implements Serializable {
 
 	@EJB
 	private LogincaseLocal loginEJB;
+	private String home = "index.faces?faces-redirect=true";
 
 	public String home() {
-		return "index.faces?faces-redirect=true";
+		return home;
 	}
 
 	public void homedirect() {
@@ -34,7 +30,7 @@ public class NavigationController implements Serializable {
 			FacesContext.getCurrentInstance().getExternalContext().redirect("/VibreWeb/index.xhtml");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 		}
 	}
 
@@ -43,21 +39,27 @@ public class NavigationController implements Serializable {
 			FacesContext.getCurrentInstance().getExternalContext().redirect("/VibreWeb/users/profielSettings.xhtml");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.logMsg(1, e.toString());
 		}
 
 	}
 
+	private String profiel = "/spotter/profielpagina.faces?faces-redirect=true";
+	private String doorzoekenProjecten = "projectenZoekpagina.faces?faces-redirect=true";
+	private String doorzoekenUsers = "userZoekPagina.faces?faces-redirect=true";
+	private String register = "register.faces?faces-redirect=true";
+	private String createProjectPage = "/users/createProject.faces?faces-redirect=true";
+
 	public String profiel() {
-		return "/spotter/profielpagina.faces?faces-redirect=true";
+		return profiel;
 	}
 
 	public String doorzoekProjecten() {
-		return "projectenZoekpagina.faces?faces-redirect=true";
+		return doorzoekenProjecten;
 	}
 
 	public String doorzoekUsers() {
-		return "userZoekPagina.faces?faces-redirect=true";
+		return doorzoekenUsers;
 	}
 
 	public String loginPage() {
@@ -69,11 +71,11 @@ public class NavigationController implements Serializable {
 	}
 
 	public String register() {
-		return "register.faces?faces-redirect=true";
+		return register;
 	}
 
 	public String createProjectPage() {
-		return "/users/createProject.faces?faces-redirect=true";
+		return createProjectPage;
 	}
 
 }

@@ -41,13 +41,6 @@ public class LocationController implements Serializable {
 		getLocations();
 	}
 
-	public double getLatOld(){
-		return 51.05879387;
-	}
-	
-	public double getLngOld(){
-		return 3.712971;
-	}
 	
 	public void getLocations(){
 		setLocatie(locationEJB.findLocaties());

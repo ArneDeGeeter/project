@@ -131,7 +131,7 @@ public class MetingEJB implements MetingEJBLocal {
 
 			double herz = h;
 
-			ArrayList<Float> y = new ArrayList<Float>();
+			ArrayList<Float> y = new ArrayList<>();
 			double sizeArray;
 			double eindTijd;
 			double periode;
@@ -209,7 +209,7 @@ public class MetingEJB implements MetingEJBLocal {
 			// 1 grote string omzetten naar 6 float arrays van meetwaarden en
 			// f-waarden
 			String[] getallen = ba.split(" ");
-			ArrayList<Float> f = new ArrayList<Float>();
+			ArrayList<Float> f = new ArrayList<>();
 			ArrayList<Float> zWaarde = new ArrayList<>();
 			ArrayList<Float> yWaarde = new ArrayList<>();
 			ArrayList<Float> xWaarde = new ArrayList<>();

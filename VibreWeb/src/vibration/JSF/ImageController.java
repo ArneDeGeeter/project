@@ -47,7 +47,7 @@ public class ImageController implements Serializable {
 	private String naam;
 	private String foutMessage;
 
-	private List<Experimenten> experiments = new ArrayList<Experimenten>();
+	private List<Experimenten> experiments = new ArrayList<>();
 
 	// verwijderen 1 tot meerdere experimenten.
 	public void verwijderExperiment() {

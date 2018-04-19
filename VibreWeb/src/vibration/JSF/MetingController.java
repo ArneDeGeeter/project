@@ -112,9 +112,9 @@ public class MetingController implements Serializable {
 
 	private LineChartModel initLinearModel(Meting meting) throws IOException {
 		LineChartModel model = new LineChartModel();
-		Map<Object, Number> x = new HashMap<Object, Number>();
-		Map<Object, Number> y = new HashMap<Object, Number>();
-		Map<Object, Number> z = new HashMap<Object, Number>();
+		Map<Object, Number> x = new HashMap<>();
+		Map<Object, Number> y = new HashMap<>();
+		Map<Object, Number> z = new HashMap<>();
 		x.put(0, 1);
 		y.put(0, 1);
 		z.put(0, 1);
@@ -132,10 +132,10 @@ public class MetingController implements Serializable {
 					DataInputStream dsy = new DataInputStream(new ByteArrayInputStream(buffery));
 					DataInputStream dsz = new DataInputStream(new ByteArrayInputStream(bufferz));
 					DataInputStream dst = new DataInputStream(new ByteArrayInputStream(buffert));
-					ArrayList<Float> flx = new ArrayList<Float>();
-					ArrayList<Float> fly = new ArrayList<Float>();
-					ArrayList<Float> flz = new ArrayList<Float>();
-					ArrayList<Float> flt = new ArrayList<Float>();
+					ArrayList<Float> flx = new ArrayList<>();
+					ArrayList<Float> fly = new ArrayList<>();
+					ArrayList<Float> flz = new ArrayList<>();
+					ArrayList<Float> flt = new ArrayList<>();
 					for (int i = 0; i < bufferx.length / 4; i++) {
 						flx.add(dsx.readFloat());
 						fly.add(dsy.readFloat());
@@ -176,9 +176,9 @@ public class MetingController implements Serializable {
 
 	private LineChartModel initLinearModel2(Meting meting) throws IOException {
 		LineChartModel model = new LineChartModel();
-		Map<Object, Number> x = new HashMap<Object, Number>();
-		Map<Object, Number> y = new HashMap<Object, Number>();
-		Map<Object, Number> z = new HashMap<Object, Number>();
+		Map<Object, Number> x = new HashMap<>();
+		Map<Object, Number> y = new HashMap<>();
+		Map<Object, Number> z = new HashMap<>();
 		x.put(0, 1);
 		y.put(0, 1);
 		z.put(0, 1);
@@ -193,10 +193,10 @@ public class MetingController implements Serializable {
 					DataInputStream dsx = new DataInputStream(new ByteArrayInputStream(bufferx));
 					DataInputStream dsy = new DataInputStream(new ByteArrayInputStream(buffery));
 					DataInputStream dsz = new DataInputStream(new ByteArrayInputStream(bufferz));
-					ArrayList<Float> flx = new ArrayList<Float>();
-					ArrayList<Float> fly = new ArrayList<Float>();
-					ArrayList<Float> flz = new ArrayList<Float>();
-					ArrayList<Float> flt = new ArrayList<Float>();
+					ArrayList<Float> flx = new ArrayList<>();
+					ArrayList<Float> fly = new ArrayList<>();
+					ArrayList<Float> flz = new ArrayList<>();
+					ArrayList<Float> flt = new ArrayList<>();
 					maxT2 = bufferx.length / 4;
 					for (int i = 0; i < bufferx.length / 4; i++) {
 						flx.add(dsx.readFloat());
@@ -237,9 +237,9 @@ public class MetingController implements Serializable {
 
 	private LineChartModel initLinearModel3(Meting meting) throws IOException {
 		LineChartModel model = new LineChartModel();
-		Map<Object, Number> x = new HashMap<Object, Number>();
-		Map<Object, Number> y = new HashMap<Object, Number>();
-		Map<Object, Number> z = new HashMap<Object, Number>();
+		Map<Object, Number> x = new HashMap<>();
+		Map<Object, Number> y = new HashMap<>();
+		Map<Object, Number> z = new HashMap<>();
 		x.put(0, 1);
 		y.put(0, 1);
 		z.put(0, 1);
@@ -256,10 +256,10 @@ public class MetingController implements Serializable {
 					DataInputStream dsy = new DataInputStream(new ByteArrayInputStream(buffery));
 					DataInputStream dsz = new DataInputStream(new ByteArrayInputStream(bufferz));
 					DataInputStream dst = new DataInputStream(new ByteArrayInputStream(buffert));
-					ArrayList<Float> flx = new ArrayList<Float>();
-					ArrayList<Float> fly = new ArrayList<Float>();
-					ArrayList<Float> flz = new ArrayList<Float>();
-					ArrayList<Float> flt = new ArrayList<Float>();
+					ArrayList<Float> flx = new ArrayList<>();
+					ArrayList<Float> fly = new ArrayList<>();
+					ArrayList<Float> flz = new ArrayList<>();
+					ArrayList<Float> flt = new ArrayList<>();
 					for (int i = 0; i < bufferx.length / 4; i++) {
 						flx.add(dsx.readFloat());
 						fly.add(dsy.readFloat());
