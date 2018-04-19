@@ -86,7 +86,4 @@ public class Meting2 implements Serializable {
 		return tijd;
 	}
 	
-	/*public void setTijd(int tijd) {
-		this.tijd = tijd;
-	}*/
 }

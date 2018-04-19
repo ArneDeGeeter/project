@@ -177,11 +177,9 @@ public void start(Stage stage) {
 	//read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
 	doc.getDocumentElement().normalize();
 
-	System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 			
 	NodeList nList = doc.getElementsByTagName("process");
 			
-	System.out.println("----------------------------");
 
 	
 	for (int temp = 0; temp < nList.getLength(); temp++) {
@@ -208,22 +206,12 @@ public void start(Stage stage) {
     } catch (Exception e) {
 	e.printStackTrace();
     }
-    /*
-    ArrayList<Process> pLijst = new ArrayList<Process>();
-    
-    for(int i=0;i<10;i++) {
-    	pLijst.add(processenLijst.get(i));
-    }
-    processenLijst=pLijst;
-    */
     
     //Start van Shortest Remaining Time-Algorithme
     
-    //clock=(int)Math.ceil(clock/10);
     
     ArrayList<Process> afgewerkteProcessen=new ArrayList<Process>();
     boolean stoppen;
-    //System.out.println(processenLijst.size());
     while(ATqueue.size()!=0||RTqueue.size()!=0) {
     	if(ATqueue.size()!=0) {
     	stoppen=false;
@@ -237,7 +225,6 @@ public void start(Stage stage) {
     	if(RTqueue.size()!=0) {
     		if(RTqueue.element().processed()) {
     			RTqueue.element().setEindtijd(clock);
-    			//System.out.println(RTqueue.element().pid+ " zijn eindtijd: "+RTqueue.element().eindtijd+ " zijn arrival time"+RTqueue.element().arrivalTime);
     			afgewerkteProcessen.add(RTqueue.remove());
     			
     		}
@@ -246,17 +233,13 @@ public void start(Stage stage) {
     	
      }
     
-    System.out.println(clock);
-    System.out.println(afgewerkteProcessen.get(0).getEindtijd());
     
     double gemOmloopTijd=0;
     double gemNormOmloopTijd=0;
-    double gemWachtTijd=0;
     
     for(Process proc:afgewerkteProcessen) {
     	gemOmloopTijd+=proc.setOmlooptijd();
     	gemNormOmloopTijd+=proc.setNormOmloopTijd();
-    	gemWachtTijd+=proc.setWachtTijd();
     	
     }
     
@@ -264,13 +247,9 @@ public void start(Stage stage) {
     
     gemOmloopTijd=gemOmloopTijd/afgewerkteProcessen.size();
     gemNormOmloopTijd=gemNormOmloopTijd/afgewerkteProcessen.size();
-    gemWachtTijd=gemWachtTijd/afgewerkteProcessen.size();
-    
-    System.out.println("Gemiddelde genormaliseerde omlooptijd: "+gemNormOmloopTijd);
-    System.out.println("Gemiddelde omlooptijd: "+gemOmloopTijd);
     
     
-    System.out.println("Done.");
+    
     
     Comparator<Process> STcomp = new ServiceTimeComparator();
     PriorityQueue<Process> STqueue = new PriorityQueue<Process>((int)aantalProc, STcomp);

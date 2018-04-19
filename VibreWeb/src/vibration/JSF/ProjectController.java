@@ -3,24 +3,20 @@ package vibration.JSF;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 import vibration.EJB.LocationEJBLocal;
 import vibration.EJB.ProjectManagementEJBLocal;
 import vibration.EJB.UserManagementEJBLocal;
 import vibration.JPA.Experimenten;
-import vibration.JPA.Personen;
 import vibration.JPA.Project;
 
 @Named("projectController")
@@ -47,7 +43,7 @@ public class ProjectController implements Serializable {
 	private String publiek;
 	private String beschrijving;
 	private String foutmelding;
-	
+
 	// locatie aanmaken
 	private int persoonId;
 	private String naam;
@@ -55,8 +51,6 @@ public class ProjectController implements Serializable {
 	private String latlng;
 	private double lat;
 	private double lng;
-	
-	
 
 	// selecteren waarden uit tabellen
 	private List<Project> projects = new ArrayList<Project>();
@@ -71,21 +65,23 @@ public class ProjectController implements Serializable {
 		} else
 			return null;
 	}
-	
-	
-	public String checkProjectStatus(){
 
-		boolean bool=userEJB.checkStatus(project.getId());
-		
-		if(bool){return "Zet project offline";}
-		else{return "Zet project online";}
+	public String checkProjectStatus() {
+
+		boolean bool = userEJB.checkStatus(project.getId());
+
+		if (bool) {
+			return "Zet project offline";
+		} else {
+			return "Zet project online";
+		}
 	}
-	
-	public void veranderStatus(){
+
+	public void veranderStatus() {
 		userEJB.veranderStatus(project);
 	}
 
-	public String geefToken(){
+	public String geefToken() {
 		return projectEJB.geefToken(project.getId());
 	}
 
@@ -108,12 +104,10 @@ public class ProjectController implements Serializable {
 		setSelectLat(project.getLocaty().getLat());
 		setSelectLng(project.getLocaty().getLng());
 	}
-	
+
 	public void findUserProjects() {
 		setUserProjects(userEJB.findUserProjects(null));
 	}
-	
-	
 
 	// creeren project
 	public void setLocation() {
@@ -137,24 +131,21 @@ public class ProjectController implements Serializable {
 		setLat(Double.parseDouble(splitLatlng[0]));
 		setLng(Double.parseDouble(sb.toString()));
 	}
-	
-	public List<Project> findAllProjects(){
+
+	public List<Project> findAllProjects() {
 		return projectEJB.findAllProjects();
 	}
 
 	public String createProject() {
-		
-		System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");System.out.println("a");
-		if(teacher==null||publiek==null||adres==null){
-			
-				foutmelding="Gelieve alle verplichte velden in te vullen";
-				System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);System.out.println(foutmelding);
-				return "";
-		}
-		else{
-			foutmelding=null;
-		projectEJB.createProjectPlusLocation(titel, teacher, publiek, beschrijving, naam, adres, lat, lng);
-		return "/spotter/profielpagina.faces?faces-redirect=true";
+
+		if (teacher == null || publiek == null || adres == null) {
+
+			foutmelding = "Gelieve alle verplichte velden in te vullen";
+			return "";
+		} else {
+			foutmelding = null;
+			projectEJB.createProjectPlusLocation(titel, teacher, publiek, beschrijving, naam, adres, lat, lng);
+			return "/spotter/profielpagina.faces?faces-redirect=true";
 		}
 	}
 
@@ -198,15 +189,15 @@ public class ProjectController implements Serializable {
 	public void setLng(double lng) {
 		this.lng = lng;
 	}
-	
-	public void setFoutmelding(String s){
-		foutmelding=s;
+
+	public void setFoutmelding(String s) {
+		foutmelding = s;
 	}
 
-	public String getFoutmelding(){
+	public String getFoutmelding() {
 		return foutmelding;
 	}
-	
+
 	public void verwijderProject() {
 		projectEJB.verwijderProject(project.getId());
 		try {

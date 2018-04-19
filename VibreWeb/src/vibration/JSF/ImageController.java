@@ -1,41 +1,22 @@
 package vibration.JSF;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferInt;
-import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.faces.bean.RequestScoped;
-
 import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseId;
 import javax.faces.view.ViewScoped;
 import javax.imageio.ImageIO;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
-
-import org.omg.CORBA.portable.ApplicationException;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 
 import vibration.EJB.MetingEJBLocal;
 import vibration.EJB.UserManagementEJBLocal;
@@ -55,7 +36,7 @@ public class ImageController implements Serializable {
 	@EJB
 	private MetingEJBLocal metingEJB;
 
-	private String image = "Test";
+	private String imageString = "Test";
 	private List<Foto> fotoData;
 	private Experimenten experiment = new Experimenten();
 	private Project project = new Project();
@@ -168,7 +149,7 @@ public class ImageController implements Serializable {
 	}
 
 	
-	public byte[] scale(byte[] fileData, int width, int height) {
+	public byte[] scale(byte[] fileData, int width, int height) throws IOException {
         ByteArrayInputStream in = new ByteArrayInputStream(fileData);
         try {
             BufferedImage img = ImageIO.read(in);
@@ -188,24 +169,21 @@ public class ImageController implements Serializable {
 
             return buffer.toByteArray();
         } catch (IOException e) {
-            System.out.println("Er ging iets mis met het herschalen van de foto.");
+			throw new IOException("Afbeelding scalen mislukt");
         }
-		return null;
     }
 	
-	public void upload() {
+	public void upload() throws IOException {
 		InputStream inputStream = null;
-		BufferedImage im=null;
 		try {
 			if (file == null) {
 				foutMessage = "Gelieve een afbeelding te selecteren.";
 				return;
 			} else {
-				im = ImageIO.read(file.getInputStream());
 				inputStream = file.getInputStream();
 			}
 		} catch (IOException e) {
-
+			throw new IOException("Afbeelding selecteren mislukt");
 		}
 
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -271,11 +249,11 @@ public class ImageController implements Serializable {
 	}
 
 	public String getImage() {
-		return image;
+		return imageString;
 	}
 
 	public void setImage(String image) {
-		this.image = image;
+		this.imageString = image;
 	}
 
 	public List<Foto> getFotoData() {

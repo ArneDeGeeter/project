@@ -151,13 +151,10 @@ public class Personen implements Serializable {
 	}
 
 	public boolean isAdmin() {
-		System.out.println(this.rol);
 
 		if (this.rol.equals("Admin")) {
-			System.out.println("TRUUUEEE");
 			return true;
 		} else {
-			System.out.println("FAAALSE");
 			return false;
 		}
 	}

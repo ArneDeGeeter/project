@@ -4,11 +4,6 @@ package vibration.JSF;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -30,10 +25,6 @@ public class FileUploadDBServlet extends HttpServlet {
 	@EJB
      private UserManagementEJBLocal userEJB;
      
-    /* database connection settings
-    private String dbURL = "jdbc:mysql://localhost:3306/AppDB";
-    private String dbUser = "root";
-    private String dbPass = "secret"; */
      
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
@@ -49,10 +40,6 @@ public class FileUploadDBServlet extends HttpServlet {
         
         if (filePart != null) {
         	
-            System.out.println(firstName);
-            System.out.println(filePart.getName());
-            System.out.println(filePart.getSize());
-            System.out.println(filePart.getContentType());
              
             inputStream = filePart.getInputStream();
             
@@ -66,9 +53,7 @@ public class FileUploadDBServlet extends HttpServlet {
             	buffer.write(bytes, 0, read);
             }
             
-            System.out.println(buffer.size());
             byte[] image = buffer.toByteArray();
-            System.out.println(image.length);
             
             userEJB.uploadenFoto(image,firstName);
             

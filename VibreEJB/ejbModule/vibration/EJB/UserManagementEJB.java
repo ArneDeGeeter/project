@@ -1,8 +1,5 @@
 package vibration.EJB;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,7 +43,8 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 
 	@EJB
 	private ProjectManagementEJBLocal projectEJB;
-	private String idpers="idpers";
+	private String idpers = "idpers";
+
 	public UserManagementEJB() {
 		// TODO Auto-generated constructor stub
 	}
@@ -374,17 +372,6 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 	}
 
 	@Override
-	public void updateProjectMetExperiment(Project p) {
-		/*
-		 * Query q = em.
-		 * createQuery("UPDATE Project SET ContactName = 'Alfred Schmidt', City= 'Frankfurt' WHERE CustomerID = 1;"
-		 * ); List<Project> project = q.getResultList(); q.executeUpdate()
-		 * 
-		 * em.persist(p);
-		 */
-	}
-
-	@Override
 	public Meting findMeting(int i) {
 		Query q = em.createQuery("SELECT f FROM Meting f WHERE f.experimenten.id = :idex");
 		q.setParameter("idex", i);
@@ -404,8 +391,8 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 			if (e2.get(i).getDate().toString().equals(e.getDate().toString())) {
 				metingEJB.berekenGrafiek(meting, e2.get(i));
 				meting.setExperimenten(e2.get(i));
-				i = e2.size();
 				em.persist(meting);
+				return;
 			}
 		}
 

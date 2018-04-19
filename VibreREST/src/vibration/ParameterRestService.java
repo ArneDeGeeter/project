@@ -1,24 +1,20 @@
 package vibration;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.EJB;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.sun.java.accessibility.util.java.awt.CheckboxTranslator;
-
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -28,20 +24,19 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.impl.crypto.MacProvider;
+import org.json.JSONObject;
 
-import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.security.Key;
-
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.IncorrectClaimException;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MissingClaimException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 import vibration.EJB.LocationEJBLocal;
 import vibration.EJB.LogincaseLocal;
 import vibration.EJB.MetingEJBLocal;
-import vibration.EJB.ProjectManagementEJB;
 import vibration.EJB.ProjectManagementEJBLocal;
-import vibration.EJB.UserManagementEJB;
 import vibration.EJB.UserManagementEJBLocal;
 import vibration.JPA.Experimenten;
 import vibration.JPA.Locaty;
@@ -92,7 +87,6 @@ public class ParameterRestService {
 	@GET
 	@Path("login")
 	public String login(@HeaderParam("naam") String naam, @HeaderParam("wachtwoord") String wachtwoord) {
-		System.out.println(naam + wachtwoord);
 		wachtwoord = loginEJB.createHash(wachtwoord);
 		return werkendeLoginUser(naam, wachtwoord);
 	}
@@ -124,10 +118,6 @@ public class ParameterRestService {
 			mainNode.put("x", xList.toString());
 			mainNode.put("y", yList.toString());
 			mainNode.put("z", zList.toString());
-			// mainNode.put("tijd", m);
-			System.out.println(mainNode.toString());
-			System.out.println(xList.size());
-			// mainNode.put("hertz", meting.getHertz())
 			return mainNode.toString();
 		}
 		return null;
@@ -149,7 +139,6 @@ public class ParameterRestService {
 	@Path("header")
 	public String headerParamService(@HeaderParam("user") String userAgent, @HeaderParam("token") String token,
 			@HeaderParam("xMeting") String xM) throws IOException {
-		System.out.println(checkKey(token) == null ? "check" : "fail");
 		byte[] byteArray = xM.getBytes();
 		ByteArrayInputStream bas = new ByteArrayInputStream(byteArray);
 		DataInputStream ds = new DataInputStream(bas);
@@ -211,7 +200,7 @@ public class ParameterRestService {
 			return "fail";
 		}
 		List<Project> projects = userEJB.findUserProjects(userEJB.geefPersoon((int) claims.getBody().get("id")));
-		StringBuffer s = new StringBuffer();
+		StringBuilder s = new StringBuilder();
 		for (int i = 0; i < projects.size(); i++) {
 			s.append(
 					projects.get(i).getId() + "," + projects.get(i).getTitel() + "," + projects.get(i).getProjectToken()
@@ -227,14 +216,8 @@ public class ParameterRestService {
 	@Produces("text/plain")
 	public String experiment(@HeaderParam("token") String token, @HeaderParam("projID") String projID)
 			throws IOException {
-		System.out.println("testEX");
-		/*
-		 * Jws<Claims> claims = checkKey(token); int persId=(int)
-		 * claims.getBody().get("id");
-		 */
 		List<Experimenten> experimenten = userEJB.findExperiment(userEJB.findProject(Integer.parseInt(projID)));
-		System.out.println(experimenten.toString());
-		StringBuffer s = new StringBuffer();
+		StringBuilder s = new StringBuilder();
 
 		for (int i = 0; i < experimenten.size(); i++) {
 			s.append(experimenten.get(i).getId() + "," + experimenten.get(i).getTitel() + ","
@@ -262,7 +245,7 @@ public class ParameterRestService {
 
 	private ArrayList<Float> stringToArray(String stringList) {
 		ArrayList<Float> list = new ArrayList<>();
-		
+
 		int spatie = 0;
 		for (int i = 0; i < stringList.length(); i++) {
 			if (stringList.charAt(i) == ' ') {
@@ -279,9 +262,7 @@ public class ParameterRestService {
 
 	// TODO: Format Function
 	private String maakMeting(String token, String type, String projID, Meting2 m, String experimentNaam, int hertz) {
-		// System.out.println(token);
 		Jws<Claims> claims = token != null ? checkKey(token) : null;
-		// System.out.println(token);
 		if (claims != null || type.equals("toevoegenViaToken")) {
 			ArrayList<Float> x = stringToArray(m.getX());
 			ArrayList<Float> y = stringToArray(m.getY());
@@ -292,7 +273,6 @@ public class ParameterRestService {
 			meting.setY(FloatArray2ByteArray(y));
 			meting.setZ(FloatArray2ByteArray(z));
 			meting.setHertz((hertz));
-			System.out.println(m);
 
 			Experimenten e = new Experimenten();
 			e.setDate(Calendar.getInstance().getTime());
@@ -300,7 +280,6 @@ public class ParameterRestService {
 
 			Project p = userEJB.findProject(Integer.parseInt(projID));
 			e.setProject(p);
-			// userEJB.addExperiment(e);
 			meting.setExperimenten(e);
 
 			userEJB.addMetingExperiment(meting, e);
@@ -333,22 +312,9 @@ public class ParameterRestService {
 	}
 
 	public String getToken(Personen p) {
-		/*
-		 * Calendar cal = Calendar.getInstance(); cal.set(Calendar.YEAR, 2018);
-		 * cal.set(Calendar.MONTH, Calendar.FEBRUARY);
-		 * cal.set(Calendar.DAY_OF_MONTH, 1); Calendar cal2 =
-		 * Calendar.getInstance(); cal2.set(Calendar.YEAR, 2018);
-		 * cal2.set(Calendar.MONTH, Calendar.MARCH);
-		 * cal2.set(Calendar.DAY_OF_MONTH, 2);
-		 * System.out.println(cal.getTimeInMillis());
-		 * System.out.println(cal.getTime().getTime());
-		 * System.out.println(cal.getTime());
-		 */
 
 		String compactJws = Jwts.builder().claim("id", p.getIdpersonen()).setSubject(p.getNaam())
-				/*
-				 * .setIssuedAt(cal.getTime()) .setExpiration(cal2.getTime())
-				 */.signWith(SignatureAlgorithm.HS512, SECRET).compact();
+				.signWith(SignatureAlgorithm.HS512, SECRET).compact();
 		checkKey(compactJws);
 		return compactJws;
 
@@ -364,24 +330,17 @@ public class ParameterRestService {
 	 */
 	private Jws<Claims> checkKey(String t) {
 		try {
-			System.out.println(t);
 			Jwts.parser().setSigningKey(SECRET).parseClaimsJws(t);
 
 			Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(t);
-			System.out.println("check2");
 			return claims;
 		} catch (SignatureException e) {
-			System.out.println(e);
-			System.out.println("SignatureException");
 			return null;
 		} catch (MissingClaimException e) {
-			System.out.println("MissingClaimException");
 			return null;
 		} catch (IncorrectClaimException e) {
-			System.out.println("IncorrectClaimException");
 			return null;
 		} catch (Exception e) {
-			System.out.println(e);
 			return null;
 		}
 

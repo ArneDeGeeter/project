@@ -58,8 +58,6 @@ public interface UserManagementEJBLocal {
 
 	void addProject(Project p);
 
-	void updateProjectMetExperiment(Project p);
-
 	void addMetingExperiment(Meting meting, Experimenten e);
 
 	void addExperiment(Experimenten e);

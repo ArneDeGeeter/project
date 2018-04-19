@@ -31,7 +31,7 @@ public class SearchController implements Serializable {
 	private String voornaam;
 	private String school;
 	private String opleiding;
-	private static final String nietBeschikbaar="Niet beschikbaar";
+	private static final String NIETBESCHIKBAAR="Niet beschikbaar";
 	
 	// zoekfuncties
 	private List<Project> projecten = new ArrayList<Project>();
@@ -146,7 +146,7 @@ public class SearchController implements Serializable {
 	}
 
 	public void setNaam(String naam) {
-		if(naam==null){this.naam=nietBeschikbaar;}
+		if(naam==null){this.naam=NIETBESCHIKBAAR;}
 		else{this.naam = naam;}
 	}
 
@@ -155,7 +155,7 @@ public class SearchController implements Serializable {
 	}
 
 	public void setVoornaam(String voornaam) {
-		if(voornaam==null){this.voornaam=nietBeschikbaar;}
+		if(voornaam==null){this.voornaam=NIETBESCHIKBAAR;}
 		else{this.voornaam = voornaam;}
 	}
 
@@ -164,7 +164,7 @@ public class SearchController implements Serializable {
 	}
 
 	public void setSchool(String school) {
-		if(school==null){this.school=nietBeschikbaar;}
+		if(school==null){this.school=NIETBESCHIKBAAR;}
 		else{this.school = school;}
 	}
 
@@ -173,7 +173,7 @@ public class SearchController implements Serializable {
 	}
 
 	public void setOpleiding(String opleiding) {
-		if(opleiding==null){this.opleiding=nietBeschikbaar;}
+		if(opleiding==null){this.opleiding=NIETBESCHIKBAAR;}
 		else{this.opleiding = opleiding;}
 	}
 }

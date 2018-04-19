@@ -1,17 +1,13 @@
 package vibration.EJB;
 
 import java.security.SecureRandom;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import javax.faces.view.ViewScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;

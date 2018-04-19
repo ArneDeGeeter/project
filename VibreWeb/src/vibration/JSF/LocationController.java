@@ -1,28 +1,20 @@
 package vibration.JSF;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-
-import org.primefaces.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import vibration.EJB.LocationEJBLocal;
-import vibration.EJB.ProjectManagementEJBLocal;
 import vibration.EJB.UserManagementEJBLocal;
 import vibration.JPA.Locaty;
-import vibration.JPA.Personen;
-import vibration.JPA.Project;
 
 @ViewScoped
 @Named("locationController")
@@ -61,7 +53,6 @@ public class LocationController implements Serializable {
 		setLocatie(locationEJB.findLocaties());
 		Gson gson = new GsonBuilder().registerTypeAdapter(Locaty.class, new LocatyAdapter()).disableHtmlEscaping().create();
 		locaties = gson.toJson(locationEJB.findLocaties()); 
-		System.out.println(locaties);
 	}
 
 	public String getLocaties() {

@@ -6,12 +6,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
@@ -21,7 +18,6 @@ import org.primefaces.model.chart.LineChartModel;
 import org.primefaces.model.chart.LineChartSeries;
 
 import vibration.EJB.MetingEJBLocal;
-import vibration.EJB.ProjectManagementEJBLocal;
 import vibration.JPA.Experimenten;
 import vibration.JPA.Meting;
 
@@ -84,7 +80,6 @@ public class MetingController implements Serializable {
 				metingenLijst[experiment.getMetings().get(2).getType()] = experiment.getMetings().get(2);
 			}
 
-			System.out.println("CreateLineModel active");
 			metingChart1 = initLinearModel(metingenLijst[1]);
 			metingChart1.setTitle("Frequentie grafiek");
 			metingChart1.setLegendPosition("e");
@@ -114,17 +109,6 @@ public class MetingController implements Serializable {
 			xAxis3.setMax(maxT3);
 		}
 	}
-	/*
-	 * public void CreateLineModel() { try { metingChart = initLinearModel(); }
-	 * catch (IOException e) { // TODO Auto-generated catch block
-	 * e.printStackTrace(); } metingChart.setTitle("Linear Chart");
-	 * metingChart.setLegendPosition("e"); Axis yAxis =
-	 * metingChart.getAxis(AxisType.Y); yAxis.setMin(0); yAxis.setMax(10); Axis
-	 * xAxis = metingChart.getAxis(AxisType.X); xAxis.setMin(0);
-	 * xAxis.setMax(5.1);
-	 * 
-	 * }
-	 */
 
 	private LineChartModel initLinearModel(Meting meting) throws IOException {
 		LineChartModel model = new LineChartModel();
@@ -152,8 +136,6 @@ public class MetingController implements Serializable {
 					ArrayList<Float> fly = new ArrayList<Float>();
 					ArrayList<Float> flz = new ArrayList<Float>();
 					ArrayList<Float> flt = new ArrayList<Float>();
-					// maxT1 = (int) Math.ceil(flt.get((buffert.length / 4)-1));
-					// maxT1 = bufferx.length / 4;
 					for (int i = 0; i < bufferx.length / 4; i++) {
 						flx.add(dsx.readFloat());
 						fly.add(dsy.readFloat());
@@ -208,7 +190,6 @@ public class MetingController implements Serializable {
 					byte[] bufferx = meting.getX();
 					byte[] buffery = meting.getY();
 					byte[] bufferz = meting.getZ();
-					// byte[] buffert = m.getTijd();
 					DataInputStream dsx = new DataInputStream(new ByteArrayInputStream(bufferx));
 					DataInputStream dsy = new DataInputStream(new ByteArrayInputStream(buffery));
 					DataInputStream dsz = new DataInputStream(new ByteArrayInputStream(bufferz));
@@ -279,8 +260,6 @@ public class MetingController implements Serializable {
 					ArrayList<Float> fly = new ArrayList<Float>();
 					ArrayList<Float> flz = new ArrayList<Float>();
 					ArrayList<Float> flt = new ArrayList<Float>();
-					// maxT3 = bufferx.length / 4;
-					// maxT3 = (int) Math.ceil(flt.get((buffert.length / 4)-1));
 					for (int i = 0; i < bufferx.length / 4; i++) {
 						flx.add(dsx.readFloat());
 						fly.add(dsy.readFloat());

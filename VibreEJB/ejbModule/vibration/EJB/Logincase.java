@@ -4,44 +4,23 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.EJBContext;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.SecurityContext;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.IncorrectClaimException;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MissingClaimException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
 import vibration.JPA.Personen;
 
 @Stateless
