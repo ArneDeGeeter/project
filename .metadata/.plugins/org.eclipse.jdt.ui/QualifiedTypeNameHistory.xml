@@ -23,7 +23,6 @@
 <fullyQualifiedTypeName name="java.util.Calendar"/>
 <fullyQualifiedTypeName name="vibration.JPA.Project"/>
 <fullyQualifiedTypeName name="java.lang.Math"/>
-<fullyQualifiedTypeName name="java.util.Map"/>
 <fullyQualifiedTypeName name="com.owlike.genson.ext.jaxrs.GensonJsonConverter"/>
 <fullyQualifiedTypeName name="java.lang.StringBuffer"/>
 <fullyQualifiedTypeName name="java.lang.System"/>
@@ -39,4 +38,12 @@
 <fullyQualifiedTypeName name="vibration.JPA.Locaty"/>
 <fullyQualifiedTypeName name="vibration.EJB.LocationEJBLocal"/>
 <fullyQualifiedTypeName name="java.lang.UnsupportedOperationException"/>
+<fullyQualifiedTypeName name="java.io.IOException"/>
+<fullyQualifiedTypeName name="io.jsonwebtoken.MissingClaimException"/>
+<fullyQualifiedTypeName name="io.jsonwebtoken.IncorrectClaimException"/>
+<fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="java.util.logging.Logger"/>
+<fullyQualifiedTypeName name="com.sun.media.jfxmedia.logging.Logger"/>
+<fullyQualifiedTypeName name="java.util.logging.Level"/>
+<fullyQualifiedTypeName name="java.lang.Integer"/>
 </qualifiedTypeNameHistroy>

@@ -37,9 +37,6 @@ public class Logincase implements LogincaseLocal {
 	@EJB
 	private UserManagementEJBLocal userEJB;
 
-	public Logincase() {
-		throw new UnsupportedOperationException();
-	}
 
 	String token;
 	private String selectPersonEmail="SELECT p FROM Personen p WHERE p.email = :email";

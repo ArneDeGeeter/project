@@ -33,15 +33,9 @@ public class MetingController implements Serializable {
 	private LineChartModel metingChart1;
 	private LineChartModel metingChart2;
 	private LineChartModel metingChart3;
-	private int maxT1;
-	private float minY1 = Integer.MAX_VALUE;
-	private float maxY1 = Integer.MIN_VALUE;
-	private int maxT2;
-	private float minY2 = Integer.MAX_VALUE;
-	private float maxY2 = Integer.MIN_VALUE;
-	private int maxT3;
-	private float minY3 = Integer.MAX_VALUE;
-	private float maxY3 = Integer.MIN_VALUE;
+	private ArrayList<Float> minY = new ArrayList<>();
+	private ArrayList<Float> maxY = new ArrayList<>();
+	private ArrayList<Integer> maxT = new ArrayList<>();
 	private Experimenten experiment = new Experimenten();
 	private String serie1 = "Series 1";
 	private String serie2 = "Series 2";
@@ -69,48 +63,57 @@ public class MetingController implements Serializable {
 
 	public void createLineModel() throws IOException {
 		Meting[] metingenLijst = new Meting[3];
-
+		initArray(minY,Integer.MAX_VALUE,3);
+		initArray(maxY,Integer.MIN_VALUE,3);
+		
 		experiment = metingEJB.findExperiment(experiment.getId());
 		if (experiment != null) {
 
-			if (experiment.getMetings().size() != 0) {
+			if (!experiment.getMetings().isEmpty()) {
 
 				metingenLijst[experiment.getMetings().get(0).getType()] = experiment.getMetings().get(0);
 				metingenLijst[experiment.getMetings().get(1).getType()] = experiment.getMetings().get(1);
 				metingenLijst[experiment.getMetings().get(2).getType()] = experiment.getMetings().get(2);
 			}
 
-			metingChart1 = initLinearModel(metingenLijst[1]);
+			metingChart1 = initLinearModel(metingenLijst[1],0);
 			metingChart1.setTitle("Frequentie grafiek");
 			metingChart1.setLegendPosition("e");
 			Axis yAxis = metingChart1.getAxis(AxisType.Y);
-			yAxis.setMin(minY1);
-			yAxis.setMax(maxY1);
+			yAxis.setMin(minY.get(0));
+			yAxis.setMax(maxY.get(0));
 			Axis xAxis = metingChart1.getAxis(AxisType.X);
 			xAxis.setMin(0);
-			xAxis.setMax(maxT1);
-			metingChart2 = initLinearModel2(metingenLijst[0]);
+			xAxis.setMax(maxT.get(0));
+			metingChart2 = initLinearModel(metingenLijst[0],1);
 			metingChart2.setTitle("Gemeten waarden met smartphone");
 			metingChart2.setLegendPosition("e");
 			Axis yAxis2 = metingChart2.getAxis(AxisType.Y);
-			yAxis2.setMin(minY2);
-			yAxis2.setMax(maxY2);
+			yAxis2.setMin(minY.get(1));
+			yAxis2.setMax(maxY.get(1));
 			Axis xAxis2 = metingChart2.getAxis(AxisType.X);
 			xAxis2.setMin(0);
-			xAxis2.setMax(maxT2);
-			metingChart3 = initLinearModel3(metingenLijst[2]);
+			xAxis2.setMax(maxT.get(1));
+			metingChart3 = initLinearModel(metingenLijst[2],2);
 			metingChart3.setTitle("Geresampelde en gefilterde data");
 			metingChart3.setLegendPosition("e");
 			Axis yAxis3 = metingChart3.getAxis(AxisType.Y);
-			yAxis3.setMin(minY3);
-			yAxis3.setMax(maxY3);
+			yAxis3.setMin(minY.get(2));
+			yAxis3.setMax(maxY.get(2));
 			Axis xAxis3 = metingChart3.getAxis(AxisType.X);
 			xAxis3.setMin(0);
-			xAxis3.setMax(maxT3);
+			xAxis3.setMax(maxT.get(2));
 		}
 	}
 
-	private LineChartModel initLinearModel(Meting meting) throws IOException {
+	private void initArray(ArrayList<Float> minY4, int value, int amount) {
+		minY4.clear();
+		for (int i = 0; i < amount; i++) {
+			minY4.add((float) value);
+		}
+	}
+
+	private LineChartModel initLinearModel(Meting meting,int number) throws IOException {
 		LineChartModel model = new LineChartModel();
 		Map<Object, Number> x = new HashMap<>();
 		Map<Object, Number> y = new HashMap<>();
@@ -119,37 +122,32 @@ public class MetingController implements Serializable {
 		y.put(0, 1);
 		z.put(0, 1);
 
-		if (experiment != null) {
-			if (experiment.getMetings().size() != 0) {
-				if ((meting != null) && (meting.getX() != null) && (meting.getY() != null) && (meting.getZ() != null)) {
+		if (checkInput(experiment, number, meting)) {
 
-
-					byte[] bufferx = meting.getX();
-					byte[] buffery = meting.getY();
-					byte[] bufferz = meting.getZ();
-					byte[] buffert = meting.getTijd();
-					DataInputStream dsx = new DataInputStream(new ByteArrayInputStream(bufferx));
-					DataInputStream dsy = new DataInputStream(new ByteArrayInputStream(buffery));
-					DataInputStream dsz = new DataInputStream(new ByteArrayInputStream(bufferz));
-					DataInputStream dst = new DataInputStream(new ByteArrayInputStream(buffert));
-					ArrayList<Float> flx = new ArrayList<>();
-					ArrayList<Float> fly = new ArrayList<>();
-					ArrayList<Float> flz = new ArrayList<>();
-					ArrayList<Float> flt = new ArrayList<>();
-					for (int i = 0; i < bufferx.length / 4; i++) {
-						flx.add(dsx.readFloat());
-						fly.add(dsy.readFloat());
-						flz.add(dsz.readFloat());
-						flt.add(dst.readFloat());
-						minY1 = Math.min(Math.min(minY1, flx.get(i)), Math.min(fly.get(i), flz.get(i)));
-						maxY1 = Math.max(Math.max(maxY1, flx.get(i)), Math.max(fly.get(i), flz.get(i)));
-						x.put(flt.get(i), flx.get(i));
-						y.put(flt.get(i), fly.get(i));
-						z.put(flt.get(i), flz.get(i));
-					}
-					maxT1 = (int) Math.ceil(flt.get(flt.size() - 1));
-				}
+			byte[] bufferx = meting.getX();
+			byte[] buffery = meting.getY();
+			byte[] bufferz = meting.getZ();
+			byte[] buffert = meting.getTijd();
+			DataInputStream dsx = new DataInputStream(new ByteArrayInputStream(bufferx));
+			DataInputStream dsy = new DataInputStream(new ByteArrayInputStream(buffery));
+			DataInputStream dsz = new DataInputStream(new ByteArrayInputStream(bufferz));
+			DataInputStream dst = new DataInputStream(new ByteArrayInputStream(buffert));
+			ArrayList<Float> flx = new ArrayList<>();
+			ArrayList<Float> fly = new ArrayList<>();
+			ArrayList<Float> flz = new ArrayList<>();
+			ArrayList<Float> flt = new ArrayList<>();
+			for (int i = 0; i < bufferx.length / 4; i++) {
+				flx.add(dsx.readFloat());
+				fly.add(dsy.readFloat());
+				flz.add(dsz.readFloat());
+				flt.add(dst.readFloat());
+				minY.set(number, Math.min(Math.min(minY.get(number), flx.get(i)), Math.min(fly.get(i), flz.get(i))));
+				maxY.set(number, Math.max(Math.max(maxY.get(number), flx.get(i)), Math.max(fly.get(i), flz.get(i))));
+				x.put(flt.get(i), flx.get(i));
+				y.put(flt.get(i), fly.get(i));
+				z.put(flt.get(i), flz.get(i));
 			}
+			maxT.set(number,  (int) Math.ceil(flt.get(flt.size() - 1)));
 		}
 		LineChartSeries series1 = new LineChartSeries();
 		series1.setLabel(serie1);
@@ -174,129 +172,12 @@ public class MetingController implements Serializable {
 		return model;
 	}
 
-	private LineChartModel initLinearModel2(Meting meting) throws IOException {
-		LineChartModel model = new LineChartModel();
-		Map<Object, Number> x = new HashMap<>();
-		Map<Object, Number> y = new HashMap<>();
-		Map<Object, Number> z = new HashMap<>();
-		x.put(0, 1);
-		y.put(0, 1);
-		z.put(0, 1);
 
-		if (experiment != null) {
-			if (experiment.getMetings().size() > 1) {
-				if ((meting != null) && (meting.getX() != null) && (meting.getY() != null) && (meting.getZ() != null)) {
-
-					byte[] bufferx = meting.getX();
-					byte[] buffery = meting.getY();
-					byte[] bufferz = meting.getZ();
-					DataInputStream dsx = new DataInputStream(new ByteArrayInputStream(bufferx));
-					DataInputStream dsy = new DataInputStream(new ByteArrayInputStream(buffery));
-					DataInputStream dsz = new DataInputStream(new ByteArrayInputStream(bufferz));
-					ArrayList<Float> flx = new ArrayList<>();
-					ArrayList<Float> fly = new ArrayList<>();
-					ArrayList<Float> flz = new ArrayList<>();
-					ArrayList<Float> flt = new ArrayList<>();
-					maxT2 = bufferx.length / 4;
-					for (int i = 0; i < bufferx.length / 4; i++) {
-						flx.add(dsx.readFloat());
-						fly.add(dsy.readFloat());
-						flz.add(dsz.readFloat());
-						flt.add(Float.valueOf(i));
-						minY2 = Math.min(Math.min(minY2, flx.get(i)), Math.min(fly.get(i), flz.get(i)));
-						maxY2 = Math.max(Math.max(maxY2, flx.get(i)), Math.max(fly.get(i), flz.get(i)));
-						x.put(i, flx.get(i));
-						y.put(i, fly.get(i));
-						z.put(i, flz.get(i));
-					}
-				}
-			}
-		}
-		LineChartSeries series1 = new LineChartSeries();
-		series1.setLabel(serie1);
-
-		LineChartSeries series2 = new LineChartSeries();
-		series2.setLabel(serie2);
-
-		LineChartSeries series3 = new LineChartSeries();
-		series3.setLabel(serie3);
-
-		series1.setData(x);
-		series1.setShowMarker(false);
-		series2.setData(y);
-		series2.setShowMarker(false);
-		series3.setData(z);
-		series3.setShowMarker(false);
-
-		model.addSeries(series1);
-		model.addSeries(series2);
-		model.addSeries(series3);
-
-		return model;
+	private boolean checkInput(Experimenten experiment2, int i, Meting meting) {
+		return (experiment2 != null & experiment2.getMetings().size() == i && meting != null && meting.getX() != null
+				&& meting.getY() != null && meting.getZ() != null);
 	}
 
-	private LineChartModel initLinearModel3(Meting meting) throws IOException {
-		LineChartModel model = new LineChartModel();
-		Map<Object, Number> x = new HashMap<>();
-		Map<Object, Number> y = new HashMap<>();
-		Map<Object, Number> z = new HashMap<>();
-		x.put(0, 1);
-		y.put(0, 1);
-		z.put(0, 1);
-
-		if (experiment != null) {
-			if (experiment.getMetings().size() > 2) {
-				if ((meting != null) && (meting.getX() != null) && (meting.getY() != null) && (meting.getZ() != null)) {
-
-					byte[] bufferx = meting.getX();
-					byte[] buffery = meting.getY();
-					byte[] bufferz = meting.getZ();
-					byte[] buffert = meting.getTijd();
-					DataInputStream dsx = new DataInputStream(new ByteArrayInputStream(bufferx));
-					DataInputStream dsy = new DataInputStream(new ByteArrayInputStream(buffery));
-					DataInputStream dsz = new DataInputStream(new ByteArrayInputStream(bufferz));
-					DataInputStream dst = new DataInputStream(new ByteArrayInputStream(buffert));
-					ArrayList<Float> flx = new ArrayList<>();
-					ArrayList<Float> fly = new ArrayList<>();
-					ArrayList<Float> flz = new ArrayList<>();
-					ArrayList<Float> flt = new ArrayList<>();
-					for (int i = 0; i < bufferx.length / 4; i++) {
-						flx.add(dsx.readFloat());
-						fly.add(dsy.readFloat());
-						flz.add(dsz.readFloat());
-						flt.add(dst.readFloat());
-						minY3 = Math.min(Math.min(minY3, flx.get(i)), Math.min(fly.get(i), flz.get(i)));
-						maxY3 = Math.max(Math.max(maxY3, flx.get(i)), Math.max(fly.get(i), flz.get(i)));
-						x.put(flt.get(i) * 10, flx.get(i));
-						y.put(flt.get(i) * 10, fly.get(i));
-						z.put(flt.get(i) * 10, flz.get(i));
-					}
-					maxT3 = (int) Math.ceil(flt.get(flt.size() - 1) * 10);
-				}
-			}
-		}
-		LineChartSeries series1 = new LineChartSeries();
-		series1.setLabel(serie1);
-
-		LineChartSeries series2 = new LineChartSeries();
-		series2.setLabel(serie2);
-
-		LineChartSeries series3 = new LineChartSeries();
-		series3.setLabel(serie3);
-
-		series1.setData(x);
-		series1.setShowMarker(false);
-		series2.setData(y);
-		series2.setShowMarker(false);
-		series3.setData(z);
-		series3.setShowMarker(false);
-
-		model.addSeries(series1);
-		model.addSeries(series2);
-		model.addSeries(series3);
-
-		return model;
-	}
 
 	public Experimenten getExperiment() {
 		return experiment;

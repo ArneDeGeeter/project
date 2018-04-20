@@ -291,12 +291,10 @@ public class UserManagementEJB implements UserManagementEJBLocal {
 	@Override
 	public List<Project> findUserPublicProjects(int idpersonen, int userId) {
 		Personen p = em.find(Personen.class, userId);
-		if (p != null) {
-			if (p.isAdmin()) {
+		if (p != null&&p.isAdmin()) {
 				Query q = em.createQuery("SELECT p FROM Project p WHERE p.personen.idpersonen = :idpers");
 				q.setParameter(idpers, idpersonen);
 				return q.getResultList();
-			}
 		}
 		Query q = em.createQuery("SELECT p FROM Project p WHERE p.personen.idpersonen = :idpers AND p.public_ = TRUE");
 		q.setParameter(idpers, idpersonen);

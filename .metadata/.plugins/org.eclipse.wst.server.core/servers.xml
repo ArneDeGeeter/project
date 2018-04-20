@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <servers>
-  <server auto-publish-setting="1" glassfish.adminserverportnumber="8048" glassfish.debugport="8000" glassfish.domainpath="E:\Project\glassfish4\glassfish\domains\domain4\localhost" glassfish.jarDeploy="true" glassfish.serverportnumber="8080" hostname="localhost" id="GlassFish 4 [localhost]" name="GlassFish 4 [localhost]" runtime-id="GlassFish 4" server-type="glassfish.server" server-type-id="glassfish.server" start-timeout="240" stop-timeout="240" timestamp="728">
+  <server auto-publish-setting="1" glassfish.adminserverportnumber="8048" glassfish.debugport="8000" glassfish.domainpath="E:\Project\glassfish4\glassfish\domains\domain4\localhost" glassfish.jarDeploy="true" glassfish.serverportnumber="8080" hostname="localhost" id="GlassFish 4 [localhost]" name="GlassFish 4 [localhost]" runtime-id="GlassFish 4" server-type="glassfish.server" server-type-id="glassfish.server" start-timeout="240" stop-timeout="240" timestamp="753">
     <list key="modules" value0="VibrEAR::org.eclipse.jst.jee.server:VibrEAR::jst.ear::7.0"/>
   </server>
 </servers>

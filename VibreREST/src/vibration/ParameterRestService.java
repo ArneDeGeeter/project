@@ -302,11 +302,8 @@ public class ParameterRestService {
 		Query q = em.createQuery("SELECT p FROM Personen p WHERE p.email = :email");
 		q.setParameter("email", naam);
 		List<Personen> personen = q.getResultList();
-		if (personen.size() == 1) {
-			if (personen.get(0).getWachtwoord().equals(wachtwoord)) {
-
+		if (personen.size() == 1&&personen.get(0).getWachtwoord().equals(wachtwoord)) {
 				return getToken(personen.get(0));
-			}
 		}
 		return "fail";
 	}

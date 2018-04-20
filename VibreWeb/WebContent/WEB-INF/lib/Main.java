@@ -226,12 +226,10 @@ public class Main extends Application {
 				}
 			}
 
-			if (!RTqueue.isEmpty()) {
-				if (RTqueue.element().processed()) {
+			if (!RTqueue.isEmpty()&&RTqueue.element().processed()) {
 					RTqueue.element().setEindtijd(clock);
 					afgewerkteProcessen.add(RTqueue.remove());
 
-				}
 			}
 			clock++;
 
